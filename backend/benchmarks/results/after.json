@@ -1,0 +1,407 @@
+{
+  "measured_at": "2026-10-04T05:26:28Z",
+  "backend_commit": "085cd746eda7d7ce19f771f00f404614c5d34e91",
+  "application_sha256": "d9487d27f98190f0f1b06ed4088deb134d4018655cedb3615e9d6c3b2cef1076",
+  "lock_sha256": "3fc68c6cc89f5f20ce15b46ca11d619bf0e9c3ea1658ba03ce1b755bdc502549",
+  "python": "3.13.16",
+  "sqlite": "3.53.1",
+  "os": "Windows-11-10.0.26200-SP0",
+  "cpu": "AMD64 Family 23 Model 104 Stepping 1, AuthenticAMD",
+  "logical_cpus": 16,
+  "physical_memory_bytes": 16518443008,
+  "conditions": {
+    "percentile_method": "nearest-rank ceil(0.95*n); small-sample p95 equals max",
+    "case": "all",
+    "profile_actions": false,
+    "transport": "real loopback HTTP, one Uvicorn process, disposable workers",
+    "source_rows": [
+      100,
+      2000
+    ],
+    "normal_distribution": "95% exact, 5% separator-only human suggestions",
+    "dense_distribution": "one identity group; dissimilar numbers; 4 million pairs",
+    "read_per_minute": 5000,
+    "mutation_per_minute": 1000,
+    "import_per_minute": 100,
+    "other_limits": "defaults: 60s worker, sampled 256 MiB child RSS, 1 worker, 5 pending"
+  },
+  "workloads": [
+    {
+      "rows_per_source": 100,
+      "dense": false,
+      "imports": [
+        {
+          "bytes": 13445,
+          "upload_accept_ms": 57.48,
+          "parse_after_accept_ms": 1108.259,
+          "confirm_ms": 30.29
+        },
+        {
+          "bytes": 13445,
+          "upload_accept_ms": 41.531,
+          "parse_after_accept_ms": 1157.382,
+          "confirm_ms": 30.073
+        }
+      ],
+      "trials": [
+        {
+          "run_id": "98d6ab8a-e95c-4562-adc8-6e5000c6920e",
+          "initial_action_refresh_http_ms": 71.373,
+          "run_accept_ms": 33.852,
+          "run_complete_ms": 631.485,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 20.11,
+            "p95_ms": 27.901,
+            "max_ms": 27.901
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 36.052,
+          "action_refresh_http_ms": 69.722,
+          "report": {
+            "accept_ms": 90.782,
+            "complete_ms": 2174.583,
+            "download_ms": 25.498,
+            "bytes": 63377,
+            "detail_rows": 100
+          },
+          "iteration": 1,
+          "database_bytes": 1310720,
+          "retained_actions_for_purchase": 5,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 91484160
+        },
+        {
+          "run_id": "ab92a9b3-b82b-4fe4-a0c5-31787689726b",
+          "initial_action_refresh_http_ms": 72.691,
+          "run_accept_ms": 46.983,
+          "run_complete_ms": 590.687,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 20.471,
+            "p95_ms": 21.455,
+            "max_ms": 21.455
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 32.038,
+          "action_refresh_http_ms": 74.635,
+          "report": {
+            "accept_ms": 86.648,
+            "complete_ms": 2098.731,
+            "download_ms": 24.309,
+            "bytes": 64040,
+            "detail_rows": 100
+          },
+          "iteration": 2,
+          "database_bytes": 1859584,
+          "retained_actions_for_purchase": 5,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 92110848
+        },
+        {
+          "run_id": "fcb5a664-c64c-4e83-ab70-c7ad569d8df8",
+          "initial_action_refresh_http_ms": 86.927,
+          "run_accept_ms": 31.571,
+          "run_complete_ms": 578.848,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 20.29,
+            "p95_ms": 20.813,
+            "max_ms": 20.813
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 33.689,
+          "action_refresh_http_ms": 70.251,
+          "report": {
+            "accept_ms": 91.436,
+            "complete_ms": 2126.227,
+            "download_ms": 26.385,
+            "bytes": 64321,
+            "detail_rows": 100
+          },
+          "iteration": 3,
+          "database_bytes": 2449408,
+          "retained_actions_for_purchase": 5,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 92782592
+        }
+      ]
+    },
+    {
+      "rows_per_source": 2000,
+      "dense": false,
+      "imports": [
+        {
+          "bytes": 269045,
+          "upload_accept_ms": 44.228,
+          "parse_after_accept_ms": 1487.479,
+          "confirm_ms": 31.361
+        },
+        {
+          "bytes": 269045,
+          "upload_accept_ms": 45.729,
+          "parse_after_accept_ms": 1473.631,
+          "confirm_ms": 30.075
+        }
+      ],
+      "trials": [
+        {
+          "run_id": "f5013ffc-b533-4d88-b806-06b6efb7447f",
+          "initial_action_refresh_http_ms": 248.706,
+          "run_accept_ms": 42.962,
+          "run_complete_ms": 1531.29,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 21.959,
+            "p95_ms": 25.516,
+            "max_ms": 25.516
+          },
+          "golden_sha256": "9729baa50f3b883b0f08e1397347a403747ad41aa236b71be0b710ad5fd5a857",
+          "counts": {
+            "EXACT_MATCH": 1900,
+            "FUZZY_SUGGESTION": 100
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 59.767,
+          "action_refresh_http_ms": 295.232,
+          "report": {
+            "accept_ms": 222.42,
+            "complete_ms": 3407.303,
+            "download_ms": 50.096,
+            "bytes": 147176,
+            "detail_rows": 200
+          },
+          "iteration": 1,
+          "database_bytes": 14188544,
+          "retained_actions_for_purchase": 100,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 98590720
+        },
+        {
+          "run_id": "2ee0927b-a4c8-404c-a12e-a675818f131b",
+          "initial_action_refresh_http_ms": 291.944,
+          "run_accept_ms": 30.721,
+          "run_complete_ms": 1594.555,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 20.415,
+            "p95_ms": 40.212,
+            "max_ms": 40.212
+          },
+          "golden_sha256": "9729baa50f3b883b0f08e1397347a403747ad41aa236b71be0b710ad5fd5a857",
+          "counts": {
+            "EXACT_MATCH": 1900,
+            "FUZZY_SUGGESTION": 100
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 65.518,
+          "action_refresh_http_ms": 305.721,
+          "report": {
+            "accept_ms": 327.784,
+            "complete_ms": 3639.769,
+            "download_ms": 62.152,
+            "bytes": 147523,
+            "detail_rows": 200
+          },
+          "iteration": 2,
+          "database_bytes": 21377024,
+          "retained_actions_for_purchase": 100,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 103419904
+        },
+        {
+          "run_id": "729c64f7-4f5c-4256-a1cc-f19c9f1ebe65",
+          "initial_action_refresh_http_ms": 282.395,
+          "run_accept_ms": 42.686,
+          "run_complete_ms": 1754.267,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 20.485,
+            "p95_ms": 27.419,
+            "max_ms": 27.419
+          },
+          "golden_sha256": "9729baa50f3b883b0f08e1397347a403747ad41aa236b71be0b710ad5fd5a857",
+          "counts": {
+            "EXACT_MATCH": 1900,
+            "FUZZY_SUGGESTION": 100
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 64.559,
+          "action_refresh_http_ms": 299.071,
+          "report": {
+            "accept_ms": 456.805,
+            "complete_ms": 4011.56,
+            "download_ms": 91.421,
+            "bytes": 147728,
+            "detail_rows": 200
+          },
+          "iteration": 3,
+          "database_bytes": 29396992,
+          "retained_actions_for_purchase": 100,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 107622400
+        }
+      ]
+    },
+    {
+      "rows_per_source": 2000,
+      "dense": true,
+      "imports": [
+        {
+          "bytes": 259935,
+          "upload_accept_ms": 43.179,
+          "parse_after_accept_ms": 1432.773,
+          "confirm_ms": 41.495
+        },
+        {
+          "bytes": 259935,
+          "upload_accept_ms": 50.488,
+          "parse_after_accept_ms": 1498.554,
+          "confirm_ms": 29.234
+        }
+      ],
+      "trials": [
+        {
+          "run_id": "58c9c909-bd4e-47f5-9b25-3cd5814873d6",
+          "initial_action_refresh_http_ms": 1565.017,
+          "run_accept_ms": 33.294,
+          "run_complete_ms": 5773.748,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 21.394,
+            "p95_ms": 37.265,
+            "max_ms": 37.265
+          },
+          "golden_sha256": "4bb569ce8957d1dcaa31e89bef3db28a6fc25d1eca9a2faff83fef7def118542",
+          "counts": {
+            "MISSING_IN_SNAPSHOT": 2000
+          },
+          "tax_exposure_review": "360000.00",
+          "action_refresh_http_ms": 75.276,
+          "iteration": 1,
+          "database_bytes": 43331584,
+          "retained_actions_for_purchase": 2000,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 103612416
+        },
+        {
+          "run_id": "94803fc6-e980-4189-9caf-be19aeba8eed",
+          "initial_action_refresh_http_ms": 1910.525,
+          "run_accept_ms": 35.252,
+          "run_complete_ms": 6044.77,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 21.265,
+            "p95_ms": 35.958,
+            "max_ms": 35.958
+          },
+          "golden_sha256": "4bb569ce8957d1dcaa31e89bef3db28a6fc25d1eca9a2faff83fef7def118542",
+          "counts": {
+            "MISSING_IN_SNAPSHOT": 2000
+          },
+          "tax_exposure_review": "360000.00",
+          "action_refresh_http_ms": 70.826,
+          "iteration": 2,
+          "database_bytes": 54038528,
+          "retained_actions_for_purchase": 2000,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 104570880
+        }
+      ]
+    }
+  ],
+  "measurement_complete": true,
+  "http_status_counts": {
+    "200": 459,
+    "202": 20,
+    "404": 1
+  },
+  "domain": {
+    "dense_2000_seconds": [
+      4.719137,
+      4.751347
+    ],
+    "profile_100": [
+      {
+        "function": "reconcile",
+        "calls": 1,
+        "total_seconds": 0.029773
+      },
+      {
+        "function": "key",
+        "calls": 900,
+        "total_seconds": 0.008718
+      },
+      {
+        "function": "identity",
+        "calls": 1300,
+        "total_seconds": 0.007802
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 6500,
+        "total_seconds": 0.004655
+      },
+      {
+        "function": "__init__",
+        "calls": 2,
+        "total_seconds": 0.003575
+      },
+      {
+        "function": "update",
+        "calls": 2,
+        "total_seconds": 0.003559
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 101,
+        "total_seconds": 0.001729
+      },
+      {
+        "function": "exact_number",
+        "calls": 1100,
+        "total_seconds": 0.001705
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 101,
+        "total_seconds": 0.00167
+      },
+      {
+        "function": "comparison_number",
+        "calls": 200,
+        "total_seconds": 0.001361
+      }
+    ]
+  },
+  "foreign_scope_status": 404,
+  "health_http": {
+    "samples": 371,
+    "median_ms": 20.984,
+    "p95_ms": 58.111,
+    "max_ms": 1700.93
+  },
+  "health_failures": 0,
+  "peak_process_tree_rss_bytes": 184229888,
+  "retained_database_bytes": 54038528,
+  "integrity_check": "ok",
+  "foreign_key_violations": 0,
+  "completed_runs": 8,
+  "active_jobs_after_work": 0,
+  "measurement_passed": true
+}

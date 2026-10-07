@@ -1,0 +1,5 @@
+src/contracts.ts
+pnpm-lock.yaml
+dist/
+node_modules/
+test-results/

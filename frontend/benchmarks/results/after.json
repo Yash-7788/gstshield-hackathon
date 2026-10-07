@@ -1,0 +1,1111 @@
+{
+  "measured_at": "2026-10-04T06:49:29.357Z",
+  "commit": "working-tree",
+  "mode": "built preview; isolated real API; synthetic data",
+  "browser": "154.0.8037.93",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 7 5700U with Radeon Graphics         ",
+  "logical_cpus": 16,
+  "ram_bytes": 16518443008,
+  "trials": [
+    {
+      "rows": 100,
+      "filter_after_review": "FUZZY_SUGGESTION",
+      "expected_initial_counts": {
+        "AMBIGUOUS": 0,
+        "AMOUNT_MISMATCH": 0,
+        "EVIDENCE_INCOMPLETE": 0,
+        "EXACT_MATCH": 95,
+        "FUZZY_SUGGESTION": 5,
+        "MISSING_IN_SNAPSHOT": 0,
+        "REJECTED": 0,
+        "REVIEW_ACCEPTED": 0
+      },
+      "steps": [
+        {
+          "name": "PURCHASE upload receipt",
+          "elapsed_ms": 145.64
+        },
+        {
+          "name": "PURCHASE parsed preview",
+          "elapsed_ms": 2589.54
+        },
+        {
+          "name": "PURCHASE confirmation",
+          "elapsed_ms": 247.87
+        },
+        {
+          "name": "PORTAL_2B upload receipt",
+          "elapsed_ms": 211.46
+        },
+        {
+          "name": "PORTAL_2B parsed preview",
+          "elapsed_ms": 2519.6
+        },
+        {
+          "name": "PORTAL_2B confirmation",
+          "elapsed_ms": 248.83
+        },
+        {
+          "name": "comparison receipt",
+          "elapsed_ms": 108.05
+        },
+        {
+          "name": "comparison results ready",
+          "elapsed_ms": 2417.88
+        },
+        {
+          "name": "result filtering",
+          "elapsed_ms": 119.45
+        },
+        {
+          "name": "review detail",
+          "elapsed_ms": 116.71
+        },
+        {
+          "name": "review saved and results refreshed",
+          "elapsed_ms": 176.22
+        },
+        {
+          "name": "next results page",
+          "elapsed_ms": 152.18
+        },
+        {
+          "name": "table scroll frames",
+          "elapsed_ms": 100.75
+        },
+        {
+          "name": "action detail",
+          "elapsed_ms": 68.04
+        },
+        {
+          "name": "expand action history",
+          "elapsed_ms": 142.99
+        },
+        {
+          "name": "report initiation",
+          "elapsed_ms": 175.22
+        },
+        {
+          "name": "report ready",
+          "elapsed_ms": 2416.36
+        },
+        {
+          "name": "private report download",
+          "elapsed_ms": 366.72
+        }
+      ],
+      "navigation": [
+        {
+          "name": "1: Sources",
+          "elapsed_ms": 146.25
+        },
+        {
+          "name": "1: Reconciliation",
+          "elapsed_ms": 133.83
+        },
+        {
+          "name": "1: Cases & evidence",
+          "elapsed_ms": 149.93
+        },
+        {
+          "name": "1: Work queue",
+          "elapsed_ms": 149.77
+        },
+        {
+          "name": "1: Payment drafts",
+          "elapsed_ms": 200.38
+        },
+        {
+          "name": "1: Reports",
+          "elapsed_ms": 150.27
+        },
+        {
+          "name": "2: Sources",
+          "elapsed_ms": 149.24
+        },
+        {
+          "name": "2: Reconciliation",
+          "elapsed_ms": 183.98
+        },
+        {
+          "name": "2: Cases & evidence",
+          "elapsed_ms": 149.3
+        },
+        {
+          "name": "2: Work queue",
+          "elapsed_ms": 135.71
+        },
+        {
+          "name": "2: Payment drafts",
+          "elapsed_ms": 147.62
+        },
+        {
+          "name": "2: Reports",
+          "elapsed_ms": 150.01
+        },
+        {
+          "name": "3: Sources",
+          "elapsed_ms": 117.11
+        },
+        {
+          "name": "3: Reconciliation",
+          "elapsed_ms": 132.95
+        },
+        {
+          "name": "3: Cases & evidence",
+          "elapsed_ms": 150.39
+        },
+        {
+          "name": "3: Work queue",
+          "elapsed_ms": 150
+        },
+        {
+          "name": "3: Payment drafts",
+          "elapsed_ms": 149.77
+        },
+        {
+          "name": "3: Reports",
+          "elapsed_ms": 149.23
+        }
+      ],
+      "mobile": [
+        {
+          "name": "mobile table scroll",
+          "elapsed_ms": 82.27
+        }
+      ],
+      "collapsed_history_descendants": 1,
+      "heap_before_navigation": 5007104,
+      "heap_after_navigation": 5209976,
+      "heap_delta": 202872,
+      "requests": [
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/53a81082-0a8c-4a7b-bd83-3bf318ea9a8a",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8bc0dfdc-77b1-4c15-abeb-5df590bc0eef",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/53a81082-0a8c-4a7b-bd83-3bf318ea9a8a",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8bc0dfdc-77b1-4c15-abeb-5df590bc0eef",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/53a81082-0a8c-4a7b-bd83-3bf318ea9a8a/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/53a81082-0a8c-4a7b-bd83-3bf318ea9a8a/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/53a81082-0a8c-4a7b-bd83-3bf318ea9a8a",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8bc0dfdc-77b1-4c15-abeb-5df590bc0eef",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/f6177348-dd57-47fd-aa38-7abab137e216",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8deb2ba8-afed-426f-b665-c2227abd8847",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/f6177348-dd57-47fd-aa38-7abab137e216",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8deb2ba8-afed-426f-b665-c2227abd8847",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/f6177348-dd57-47fd-aa38-7abab137e216/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/f6177348-dd57-47fd-aa38-7abab137e216/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/f6177348-dd57-47fd-aa38-7abab137e216",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/8deb2ba8-afed-426f-b665-c2227abd8847",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/d536c597-1bdc-4125-b35c-b9998590d994",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/d536c597-1bdc-4125-b35c-b9998590d994",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/6345a24a-1985-592a-9753-ab41bfd0bd42",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/6345a24a-1985-592a-9753-ab41bfd0bd42/review",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/6345a24a-1985-592a-9753-ab41bfd0bd42",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/d536c597-1bdc-4125-b35c-b9998590d994",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions/00dd2b82-eb2c-4f3f-86c1-abb4e4789121",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/af5f0b6f-b398-45a7-8c6a-68644cf129f3",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/af5f0b6f-b398-45a7-8c6a-68644cf129f3",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/af5f0b6f-b398-45a7-8c6a-68644cf129f3/download",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/d536c597-1bdc-4125-b35c-b9998590d994",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/ef7250d2-238c-44fd-bfa7-df60bf58ad0e/results?limit=20&cursor=0",
+          "method": "GET"
+        }
+      ],
+      "artifact_kind": "RECONCILIATION_PDF"
+    },
+    {
+      "rows": 2000,
+      "filter_after_review": "FUZZY_SUGGESTION",
+      "expected_initial_counts": {
+        "AMBIGUOUS": 0,
+        "AMOUNT_MISMATCH": 0,
+        "EVIDENCE_INCOMPLETE": 0,
+        "EXACT_MATCH": 1900,
+        "FUZZY_SUGGESTION": 100,
+        "MISSING_IN_SNAPSHOT": 0,
+        "REJECTED": 0,
+        "REVIEW_ACCEPTED": 0
+      },
+      "steps": [
+        {
+          "name": "PURCHASE upload receipt",
+          "elapsed_ms": 144.47
+        },
+        {
+          "name": "PURCHASE parsed preview",
+          "elapsed_ms": 2521.51
+        },
+        {
+          "name": "PURCHASE confirmation",
+          "elapsed_ms": 332.06
+        },
+        {
+          "name": "PORTAL_2B upload receipt",
+          "elapsed_ms": 162.32
+        },
+        {
+          "name": "PORTAL_2B parsed preview",
+          "elapsed_ms": 2538.61
+        },
+        {
+          "name": "PORTAL_2B confirmation",
+          "elapsed_ms": 248.73
+        },
+        {
+          "name": "comparison receipt",
+          "elapsed_ms": 114.43
+        },
+        {
+          "name": "comparison results ready",
+          "elapsed_ms": 2384.01
+        },
+        {
+          "name": "result filtering",
+          "elapsed_ms": 127.94
+        },
+        {
+          "name": "review detail",
+          "elapsed_ms": 136.04
+        },
+        {
+          "name": "review saved and results refreshed",
+          "elapsed_ms": 248.37
+        },
+        {
+          "name": "next results page",
+          "elapsed_ms": 120.06
+        },
+        {
+          "name": "table scroll frames",
+          "elapsed_ms": 67.69
+        },
+        {
+          "name": "action detail",
+          "elapsed_ms": 77.29
+        },
+        {
+          "name": "expand action history",
+          "elapsed_ms": 116.2
+        },
+        {
+          "name": "report initiation",
+          "elapsed_ms": 304.37
+        },
+        {
+          "name": "report ready",
+          "elapsed_ms": 4499.04
+        },
+        {
+          "name": "private report download",
+          "elapsed_ms": 299.56
+        }
+      ],
+      "navigation": [
+        {
+          "name": "1: Sources",
+          "elapsed_ms": 113.99
+        },
+        {
+          "name": "1: Reconciliation",
+          "elapsed_ms": 133.17
+        },
+        {
+          "name": "1: Cases & evidence",
+          "elapsed_ms": 149.67
+        },
+        {
+          "name": "1: Work queue",
+          "elapsed_ms": 200.9
+        },
+        {
+          "name": "1: Payment drafts",
+          "elapsed_ms": 149.86
+        },
+        {
+          "name": "1: Reports",
+          "elapsed_ms": 216.38
+        },
+        {
+          "name": "2: Sources",
+          "elapsed_ms": 116.86
+        },
+        {
+          "name": "2: Reconciliation",
+          "elapsed_ms": 132.83
+        },
+        {
+          "name": "2: Cases & evidence",
+          "elapsed_ms": 150.09
+        },
+        {
+          "name": "2: Work queue",
+          "elapsed_ms": 200.4
+        },
+        {
+          "name": "2: Payment drafts",
+          "elapsed_ms": 217.36
+        },
+        {
+          "name": "2: Reports",
+          "elapsed_ms": 232.68
+        },
+        {
+          "name": "3: Sources",
+          "elapsed_ms": 116.12
+        },
+        {
+          "name": "3: Reconciliation",
+          "elapsed_ms": 133.83
+        },
+        {
+          "name": "3: Cases & evidence",
+          "elapsed_ms": 200.05
+        },
+        {
+          "name": "3: Work queue",
+          "elapsed_ms": 200.99
+        },
+        {
+          "name": "3: Payment drafts",
+          "elapsed_ms": 149.06
+        },
+        {
+          "name": "3: Reports",
+          "elapsed_ms": 216.63
+        }
+      ],
+      "mobile": [
+        {
+          "name": "mobile table scroll",
+          "elapsed_ms": 74.77
+        }
+      ],
+      "collapsed_history_descendants": 1,
+      "heap_before_navigation": 5896484,
+      "heap_after_navigation": 5942436,
+      "heap_delta": 45952,
+      "requests": [
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/e5cca5e8-6620-435a-a81a-ea256b732e38",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/a5a15a50-8677-4953-b814-64b72f3d0dd0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/e5cca5e8-6620-435a-a81a-ea256b732e38",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/a5a15a50-8677-4953-b814-64b72f3d0dd0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/e5cca5e8-6620-435a-a81a-ea256b732e38/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/e5cca5e8-6620-435a-a81a-ea256b732e38/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/e5cca5e8-6620-435a-a81a-ea256b732e38",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/a5a15a50-8677-4953-b814-64b72f3d0dd0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/fb014745-833d-4258-aa1b-f926858a2e6b",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/50579425-5e2a-4f68-8800-29c82258a46f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/fb014745-833d-4258-aa1b-f926858a2e6b",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/50579425-5e2a-4f68-8800-29c82258a46f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/fb014745-833d-4258-aa1b-f926858a2e6b/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/fb014745-833d-4258-aa1b-f926858a2e6b/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports/fb014745-833d-4258-aa1b-f926858a2e6b",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/50579425-5e2a-4f68-8800-29c82258a46f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/b9ab6cfb-9af7-4ace-8480-58ca7ce30b5c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/b9ab6cfb-9af7-4ace-8480-58ca7ce30b5c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/81bed3f6-e5d7-5127-bef2-aa253480b159",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/81bed3f6-e5d7-5127-bef2-aa253480b159/review",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/results/81bed3f6-e5d7-5127-bef2-aa253480b159",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/b9ab6cfb-9af7-4ace-8480-58ca7ce30b5c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions/01c7a45e-88d8-442d-b2d0-961f20d21394",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/538c3c6e-bc5b-4dbb-b8f0-7e1a55c6993c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/538c3c6e-bc5b-4dbb-b8f0-7e1a55c6993c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/538c3c6e-bc5b-4dbb-b8f0-7e1a55c6993c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts/538c3c6e-bc5b-4dbb-b8f0-7e1a55c6993c/download",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/cases?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/actions?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/proposals?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=100&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/artifacts?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/imports?registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs?limit=20&registration_id=d8534238-d5d2-40b3-b384-9203cf001ee9&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/jobs/b9ab6cfb-9af7-4ace-8480-58ca7ce30b5c",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/ed0948ae-fdce-4fc6-8891-4cb5e4fa6ec4/runs/f58c9df7-0d7a-40b6-859c-c90536c3104e/results?limit=20&cursor=0",
+          "method": "GET"
+        }
+      ],
+      "artifact_kind": "RECONCILIATION_PDF"
+    }
+  ],
+  "complete": true,
+  "initial_login_ready_ms": 884,
+  "initial_resources": [
+    {
+      "name": "/assets/index-BphZ7TJA.js",
+      "bytes": 286343,
+      "duration_ms": 46.5
+    },
+    {
+      "name": "/assets/index-cvTnpZdx.css",
+      "bytes": 4282,
+      "duration_ms": 24.80000001192093
+    }
+  ],
+  "browser_observations": {
+    "long_tasks": [
+      {
+        "start_ms": 626.5,
+        "duration_ms": 55
+      },
+      {
+        "start_ms": 21641.20000001788,
+        "duration_ms": 62
+      },
+      {
+        "start_ms": 24909.30000001192,
+        "duration_ms": 68
+      }
+    ],
+    "layout_shifts": [
+      0.024452362060546875,
+      0.007799479166666666,
+      0.014143543720245363,
+      0.007283175865809123,
+      0.021426719586054487,
+      0.01351856780052185,
+      0.00048086419753086423
+    ]
+  },
+  "source_sha256": "d6138a7c858964db41dd85335d610aadb1246a1994061fc98f40fc357c3850fc",
+  "budgets": {
+    "initial_ms": 2000,
+    "navigation_max_ms": 1000,
+    "interaction_ms": 1000,
+    "parsing_ms": 6000,
+    "matching_ms": 10000,
+    "report_ready_ms": 15000,
+    "download_ms": 3000,
+    "heap_growth_bytes": 2097152
+  },
+  "budget_failures": [],
+  "measurement_passed": true,
+  "errors": []
+}

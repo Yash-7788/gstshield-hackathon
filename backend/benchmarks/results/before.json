@@ -1,0 +1,199 @@
+{
+  "measured_at": "2026-10-04T04:44:23Z",
+  "backend_commit": "085cd746eda7d7ce19f771f00f404614c5d34e91",
+  "python": "3.13.16",
+  "sqlite": "3.53.1",
+  "os": "Windows-11-10.0.26200-SP0",
+  "cpu": "AMD64 Family 23 Model 104 Stepping 1, AuthenticAMD",
+  "logical_cpus": 16,
+  "physical_memory_bytes": 16518443008,
+  "conditions": {
+    "transport": "real loopback HTTP, one Uvicorn process, disposable workers",
+    "source_rows": [
+      100,
+      2000
+    ],
+    "normal_distribution": "95% exact, 5% separator-only human suggestions",
+    "dense_distribution": "one identity group; dissimilar numbers; 4 million pairs",
+    "read_per_minute": 5000,
+    "mutation_per_minute": 1000,
+    "import_per_minute": 100,
+    "other_limits": "defaults: 60s worker, sampled 256 MiB child RSS, 1 worker, 5 pending",
+    "percentile_method": "legacy floor index; small-sample p95 may be understated; use medians/max for comparison"
+  },
+  "workloads": [
+    {
+      "rows_per_source": 100,
+      "dense": false,
+      "imports": [
+        {
+          "bytes": 13445,
+          "upload_accept_ms": 62.069,
+          "parse_after_accept_ms": 1221.453,
+          "confirm_ms": 35.705
+        },
+        {
+          "bytes": 13445,
+          "upload_accept_ms": 49.214,
+          "parse_after_accept_ms": 1212.528,
+          "confirm_ms": 41.744
+        }
+      ],
+      "trials": [
+        {
+          "run_accept_ms": 46.365,
+          "run_complete_ms": 649.457,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 23.209,
+            "p95_ms": 24.398,
+            "max_ms": 26.734
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 42.685,
+          "report": {
+            "accept_ms": 151.982,
+            "complete_ms": 2527.124,
+            "download_ms": 31.329,
+            "bytes": 76215,
+            "detail_rows": 100
+          },
+          "iteration": 1,
+          "database_bytes": 1245184,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 92884992
+        },
+        {
+          "run_accept_ms": 40.541,
+          "run_complete_ms": 627.279,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 24.642,
+            "p95_ms": 25.392,
+            "max_ms": 27.956
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 40.791,
+          "report": {
+            "accept_ms": 142.938,
+            "complete_ms": 3022.372,
+            "download_ms": 34.587,
+            "bytes": 101561,
+            "detail_rows": 100
+          },
+          "iteration": 2,
+          "database_bytes": 1732608,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 93274112
+        },
+        {
+          "run_accept_ms": 41.333,
+          "run_complete_ms": 680.545,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 25.521,
+            "p95_ms": 26.91,
+            "max_ms": 37.632
+          },
+          "golden_sha256": "4d1784f9c5d82620c36434893ad7206b2134e7b1392666e3c574f93a5746de74",
+          "counts": {
+            "EXACT_MATCH": 95,
+            "FUZZY_SUGGESTION": 5
+          },
+          "tax_exposure_review": "0.00",
+          "review_ms": 39.668,
+          "report": {
+            "accept_ms": 162.785,
+            "complete_ms": 3291.365,
+            "download_ms": 44.972,
+            "bytes": 125888,
+            "detail_rows": 100
+          },
+          "iteration": 3,
+          "database_bytes": 2244608,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 93483008
+        }
+      ]
+    }
+  ],
+  "measurement_complete": false,
+  "http_status_counts": {
+    "200": 119,
+    "202": 8
+  },
+  "domain": {
+    "dense_2000_seconds": [
+      35.692554,
+      36.429615
+    ],
+    "profile_100": [
+      {
+        "function": "reconcile",
+        "calls": 1,
+        "total_seconds": 0.204366
+      },
+      {
+        "function": "comparison_number",
+        "calls": 10100,
+        "total_seconds": 0.086607
+      },
+      {
+        "function": "sub",
+        "calls": 10100,
+        "total_seconds": 0.050167
+      },
+      {
+        "function": "exact_number",
+        "calls": 11000,
+        "total_seconds": 0.02339
+      },
+      {
+        "function": "_compile",
+        "calls": 10100,
+        "total_seconds": 0.019054
+      },
+      {
+        "function": "key",
+        "calls": 900,
+        "total_seconds": 0.015751
+      },
+      {
+        "function": "identity",
+        "calls": 1300,
+        "total_seconds": 0.014158
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 6500,
+        "total_seconds": 0.007388
+      },
+      {
+        "function": "__init__",
+        "calls": 2,
+        "total_seconds": 0.005868
+      },
+      {
+        "function": "update",
+        "calls": 2,
+        "total_seconds": 0.005838
+      }
+    ]
+  },
+  "interruption": {
+    "stage": "normal 2000-row workload, result pagination after first completed run",
+    "http_status": 503,
+    "error_code": "STORAGE_UNAVAILABLE",
+    "note": "Baseline stopped; only saved completed trials are compared. Read and health totals are partial."
+  }
+}

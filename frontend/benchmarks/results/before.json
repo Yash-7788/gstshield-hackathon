@@ -1,0 +1,1114 @@
+{
+  "measured_at": "2026-10-04T06:19:54.443Z",
+  "commit": "4ff43fe",
+  "mode": "built preview; isolated real API; synthetic data",
+  "browser": "154.0.8037.93",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 7 5700U with Radeon Graphics         ",
+  "logical_cpus": 16,
+  "ram_bytes": 16518443008,
+  "trials": [
+    {
+      "rows": 100,
+      "filter_after_review": "",
+      "expected_initial_counts": {
+        "AMBIGUOUS": 0,
+        "AMOUNT_MISMATCH": 0,
+        "EVIDENCE_INCOMPLETE": 0,
+        "EXACT_MATCH": 95,
+        "FUZZY_SUGGESTION": 5,
+        "MISSING_IN_SNAPSHOT": 0,
+        "REJECTED": 0,
+        "REVIEW_ACCEPTED": 0
+      },
+      "steps": [
+        {
+          "name": "PURCHASE upload receipt",
+          "elapsed_ms": 185.1
+        },
+        {
+          "name": "PURCHASE parsed preview",
+          "elapsed_ms": 2591.98
+        },
+        {
+          "name": "PURCHASE confirmation",
+          "elapsed_ms": 245.35
+        },
+        {
+          "name": "PORTAL_2B upload receipt",
+          "elapsed_ms": 184.38
+        },
+        {
+          "name": "PORTAL_2B parsed preview",
+          "elapsed_ms": 2610.33
+        },
+        {
+          "name": "PORTAL_2B confirmation",
+          "elapsed_ms": 224.96
+        },
+        {
+          "name": "comparison receipt",
+          "elapsed_ms": 150.74
+        },
+        {
+          "name": "comparison results ready",
+          "elapsed_ms": 2402.03
+        },
+        {
+          "name": "result filtering",
+          "elapsed_ms": 134.33
+        },
+        {
+          "name": "review detail",
+          "elapsed_ms": 152.2
+        },
+        {
+          "name": "review saved and results refreshed",
+          "elapsed_ms": 375.51
+        },
+        {
+          "name": "next results page",
+          "elapsed_ms": 131.44
+        },
+        {
+          "name": "table scroll frames",
+          "elapsed_ms": 100.52
+        },
+        {
+          "name": "action detail",
+          "elapsed_ms": 126.79
+        },
+        {
+          "name": "expand action history",
+          "elapsed_ms": 127.88
+        },
+        {
+          "name": "report initiation",
+          "elapsed_ms": 238.36
+        },
+        {
+          "name": "report ready",
+          "elapsed_ms": 4483
+        },
+        {
+          "name": "private report download",
+          "elapsed_ms": 584.63
+        }
+      ],
+      "navigation": [
+        {
+          "name": "1: Sources",
+          "elapsed_ms": 155.95
+        },
+        {
+          "name": "1: Reconciliation",
+          "elapsed_ms": 165.09
+        },
+        {
+          "name": "1: Cases & evidence",
+          "elapsed_ms": 151.17
+        },
+        {
+          "name": "1: Work queue",
+          "elapsed_ms": 181.84
+        },
+        {
+          "name": "1: Payment drafts",
+          "elapsed_ms": 183.47
+        },
+        {
+          "name": "1: Reports",
+          "elapsed_ms": 200.63
+        },
+        {
+          "name": "2: Sources",
+          "elapsed_ms": 149.88
+        },
+        {
+          "name": "2: Reconciliation",
+          "elapsed_ms": 133.4
+        },
+        {
+          "name": "2: Cases & evidence",
+          "elapsed_ms": 166.49
+        },
+        {
+          "name": "2: Work queue",
+          "elapsed_ms": 199.96
+        },
+        {
+          "name": "2: Payment drafts",
+          "elapsed_ms": 150.86
+        },
+        {
+          "name": "2: Reports",
+          "elapsed_ms": 149.33
+        },
+        {
+          "name": "3: Sources",
+          "elapsed_ms": 116.42
+        },
+        {
+          "name": "3: Reconciliation",
+          "elapsed_ms": 150.03
+        },
+        {
+          "name": "3: Cases & evidence",
+          "elapsed_ms": 200.76
+        },
+        {
+          "name": "3: Work queue",
+          "elapsed_ms": 149.56
+        },
+        {
+          "name": "3: Payment drafts",
+          "elapsed_ms": 149.52
+        },
+        {
+          "name": "3: Reports",
+          "elapsed_ms": 217.8
+        }
+      ],
+      "mobile": [
+        {
+          "name": "mobile table scroll",
+          "elapsed_ms": 78.44
+        }
+      ],
+      "collapsed_history_descendants": 38,
+      "heap_before_navigation": 4474332,
+      "heap_after_navigation": 4662948,
+      "heap_delta": 188616,
+      "requests": [
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/e5a69287-12e2-436e-87e1-2e2f4ebc7d69",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/e5a69287-12e2-436e-87e1-2e2f4ebc7d69",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/e5a69287-12e2-436e-87e1-2e2f4ebc7d69",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/60570fa9-1780-4ae6-9944-6979ccf4b0f4/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/d22119c8-9aec-4e8e-bcf7-bce1ba37d4b4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/d22119c8-9aec-4e8e-bcf7-bce1ba37d4b4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/d22119c8-9aec-4e8e-bcf7-bce1ba37d4b4",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/ba2825dd-9682-4569-9a27-e3aae227d3cb/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/9f2d8a4a-c470-45fa-9f88-d03148743ff9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/9f2d8a4a-c470-45fa-9f88-d03148743ff9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/1dd1a0e6-2f1f-50da-b901-7cab67e68f0a",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/1dd1a0e6-2f1f-50da-b901-7cab67e68f0a/review",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/1dd1a0e6-2f1f-50da-b901-7cab67e68f0a",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/9f2d8a4a-c470-45fa-9f88-d03148743ff9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions/a3221d3b-60ce-4c37-9411-eb7d4f52b7e5",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/02aa8227-547c-4817-8319-56c1865a4f13",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/02aa8227-547c-4817-8319-56c1865a4f13",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/02aa8227-547c-4817-8319-56c1865a4f13",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/02aa8227-547c-4817-8319-56c1865a4f13/download",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-09",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/9f2d8a4a-c470-45fa-9f88-d03148743ff9",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/a95ef0ef-3b26-4319-98c7-4fb1273065c9/results?limit=20&cursor=0",
+          "method": "GET"
+        }
+      ],
+      "artifact_kind": "RECONCILIATION_PDF"
+    },
+    {
+      "rows": 2000,
+      "filter_after_review": "",
+      "expected_initial_counts": {
+        "AMBIGUOUS": 0,
+        "AMOUNT_MISMATCH": 0,
+        "EVIDENCE_INCOMPLETE": 0,
+        "EXACT_MATCH": 1900,
+        "FUZZY_SUGGESTION": 100,
+        "MISSING_IN_SNAPSHOT": 0,
+        "REJECTED": 0,
+        "REVIEW_ACCEPTED": 0
+      },
+      "steps": [
+        {
+          "name": "PURCHASE upload receipt",
+          "elapsed_ms": 145.64
+        },
+        {
+          "name": "PURCHASE parsed preview",
+          "elapsed_ms": 2523.88
+        },
+        {
+          "name": "PURCHASE confirmation",
+          "elapsed_ms": 192.94
+        },
+        {
+          "name": "PORTAL_2B upload receipt",
+          "elapsed_ms": 242.46
+        },
+        {
+          "name": "PORTAL_2B parsed preview",
+          "elapsed_ms": 2589.41
+        },
+        {
+          "name": "PORTAL_2B confirmation",
+          "elapsed_ms": 214.83
+        },
+        {
+          "name": "comparison receipt",
+          "elapsed_ms": 169.64
+        },
+        {
+          "name": "comparison results ready",
+          "elapsed_ms": 2435.42
+        },
+        {
+          "name": "result filtering",
+          "elapsed_ms": 180.94
+        },
+        {
+          "name": "review detail",
+          "elapsed_ms": 136.42
+        },
+        {
+          "name": "review saved and results refreshed",
+          "elapsed_ms": 428.1
+        },
+        {
+          "name": "next results page",
+          "elapsed_ms": 129.08
+        },
+        {
+          "name": "table scroll frames",
+          "elapsed_ms": 66.44
+        },
+        {
+          "name": "action detail",
+          "elapsed_ms": 115.85
+        },
+        {
+          "name": "expand action history",
+          "elapsed_ms": 73.35
+        },
+        {
+          "name": "report initiation",
+          "elapsed_ms": 319.93
+        },
+        {
+          "name": "report ready",
+          "elapsed_ms": 4500.61
+        },
+        {
+          "name": "private report download",
+          "elapsed_ms": 366.14
+        }
+      ],
+      "navigation": [
+        {
+          "name": "1: Sources",
+          "elapsed_ms": 155.01
+        },
+        {
+          "name": "1: Reconciliation",
+          "elapsed_ms": 199.12
+        },
+        {
+          "name": "1: Cases & evidence",
+          "elapsed_ms": 167.07
+        },
+        {
+          "name": "1: Work queue",
+          "elapsed_ms": 216.61
+        },
+        {
+          "name": "1: Payment drafts",
+          "elapsed_ms": 150.68
+        },
+        {
+          "name": "1: Reports",
+          "elapsed_ms": 215.93
+        },
+        {
+          "name": "2: Sources",
+          "elapsed_ms": 116.95
+        },
+        {
+          "name": "2: Reconciliation",
+          "elapsed_ms": 133.33
+        },
+        {
+          "name": "2: Cases & evidence",
+          "elapsed_ms": 149.76
+        },
+        {
+          "name": "2: Work queue",
+          "elapsed_ms": 200.21
+        },
+        {
+          "name": "2: Payment drafts",
+          "elapsed_ms": 149.47
+        },
+        {
+          "name": "2: Reports",
+          "elapsed_ms": 217.17
+        },
+        {
+          "name": "3: Sources",
+          "elapsed_ms": 117.53
+        },
+        {
+          "name": "3: Reconciliation",
+          "elapsed_ms": 132.38
+        },
+        {
+          "name": "3: Cases & evidence",
+          "elapsed_ms": 166.93
+        },
+        {
+          "name": "3: Work queue",
+          "elapsed_ms": 200.06
+        },
+        {
+          "name": "3: Payment drafts",
+          "elapsed_ms": 215.7
+        },
+        {
+          "name": "3: Reports",
+          "elapsed_ms": 217.03
+        }
+      ],
+      "mobile": [
+        {
+          "name": "mobile table scroll",
+          "elapsed_ms": 69.66
+        }
+      ],
+      "collapsed_history_descendants": 38,
+      "heap_before_navigation": 5368012,
+      "heap_after_navigation": 5392900,
+      "heap_delta": 24888,
+      "requests": [
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/b5640f34-34ea-4730-aac5-b94e94af7266",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/b5640f34-34ea-4730-aac5-b94e94af7266",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/b5640f34-34ea-4730-aac5-b94e94af7266",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/034d2963-52ff-40e0-a59a-08a67290a034/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/c99f7e46-d4e7-4637-902c-9ad9cdae78b0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/c99f7e46-d4e7-4637-902c-9ad9cdae78b0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac/confirm",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/c99f7e46-d4e7-4637-902c-9ad9cdae78b0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports/375ca5f4-d7f8-4bd3-99db-dfd076a513ac/rows?limit=20&cursor=0&state=ALL",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/ab39a19c-3efc-407f-99cb-77883b681210",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/ab39a19c-3efc-407f-99cb-77883b681210",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/63fc5a3d-d10f-5538-9e22-63f7d7f387d2",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/63fc5a3d-d10f-5538-9e22-63f7d7f387d2/review",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=0&status=FUZZY_SUGGESTION",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/results/63fc5a3d-d10f-5538-9e22-63f7d7f387d2",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/ab39a19c-3efc-407f-99cb-77883b681210",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=0",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions/01cc35ab-2d5f-4dd9-9fc8-b65321111b04",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts",
+          "method": "POST"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/1f8a2844-62cc-45d4-ac60-a109de80dc6f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/1f8a2844-62cc-45d4-ac60-a109de80dc6f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/1f8a2844-62cc-45d4-ac60-a109de80dc6f",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts/1f8a2844-62cc-45d4-ac60-a109de80dc6f/download",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/cases?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/actions?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&due_only=false",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/proposals?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=100&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/artifacts?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=20",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/imports?registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10&limit=100",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs?limit=20&registration_id=c234f758-178a-43d6-8235-46844427d7bc&period=2024-10",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/jobs/ab39a19c-3efc-407f-99cb-77883b681210",
+          "method": "GET"
+        },
+        {
+          "url": "http://127.0.0.1:8027/api/v1/workspaces/d13b3f7f-ebec-44bf-821f-2e9497d45186/runs/f94ac420-f310-4243-821f-9c119d08fa70/results?limit=20&cursor=0",
+          "method": "GET"
+        }
+      ],
+      "artifact_kind": "RECONCILIATION_PDF"
+    }
+  ],
+  "complete": true,
+  "initial_login_ready_ms": 907,
+  "initial_resources": [
+    {
+      "name": "/assets/index-tkcdvVu_.js",
+      "bytes": 283404,
+      "duration_ms": 61.5
+    },
+    {
+      "name": "/assets/index-U0P527Ri.css",
+      "bytes": 3776,
+      "duration_ms": 32.599999994039536
+    }
+  ],
+  "browser_observations": {
+    "long_tasks": [
+      {
+        "start_ms": 25652.30000001192,
+        "duration_ms": 65
+      },
+      {
+        "start_ms": 28876.09999999404,
+        "duration_ms": 74
+      }
+    ],
+    "layout_shifts": [
+      0.024452362060546875,
+      0.007799479166666666,
+      0.014143543720245363,
+      0.007283175865809123,
+      0.021426719586054487,
+      0.01351856780052185,
+      0.00048086419753086423
+    ]
+  },
+  "errors": []
+}

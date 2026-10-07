@@ -1,0 +1,33 @@
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+.DS_Store
+# Local tooling and private GST data must never be committed.
+.tooling/
+backend/data/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Local code-intelligence/session activity is machine state, not application source.
+.infigraph/
+
+# Synthetic browser verification artifacts.
+frontend/test-results/
+frontend/playwright-report/
+
+# Machine-specific synthetic benchmark diagnostics.
+backend/benchmarks/results/*.log
+
+# Private synthetic browser-performance screenshots.
+frontend/benchmarks/screenshots/
+
+# Local runtime logs and temporary verification artifacts.
+/tmp/

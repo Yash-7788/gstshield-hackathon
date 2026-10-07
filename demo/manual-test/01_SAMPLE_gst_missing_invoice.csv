@@ -1,0 +1,2 @@
+voucher_id,recipient_gstin,supplier_gstin,invoice_number,invoice_date,document_type,taxable_value,igst,cgst,sgst,cess,other_charges,round_off,gross_total
+SAMPLE-TEST-ONLY,27ABCDE1234F1Z5,27PQRSX5678L1Z2,OTHER-MANUAL-001,2026-10-07,INVOICE,100000.00,0.00,9000.00,9000.00,0.00,0.00,0.00,118000.00

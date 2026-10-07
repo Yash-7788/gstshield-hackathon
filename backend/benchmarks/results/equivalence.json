@@ -1,0 +1,50 @@
+{
+  "baseline_commit": "085cd746eda7d7ce19f771f00f404614c5d34e91",
+  "baseline_source_sha256": "d193d7b12092013751dda383f4ca1e545c72ee027948a9b084d5ddb8590253bb",
+  "optimized_source_sha256": "bc0d8f61663d28350f46a4a9e0bb24d048512ca703a2f2dc8bdb922f1bb291e4",
+  "python": "3.13.16",
+  "measured_at": "2026-10-04T05:29:55Z",
+  "timing_conditions": "Equivalence run overlaps regression verification; timings are diagnostic, not the isolated HTTP benchmark.",
+  "policy": {
+    "amount_tolerance": "0.01",
+    "fuzzy_threshold": "88.00",
+    "fuzzy_gap": "5.00",
+    "max_candidates": 10000,
+    "max_pairs": 4000000
+  },
+  "workloads": [
+    {
+      "rows_per_source": 100,
+      "dense": false,
+      "baseline_seconds": 0.018341,
+      "optimized_seconds": 0.00797,
+      "all_result_fields_equal": true,
+      "compared_pairs": 500,
+      "candidate_count": 100,
+      "result_rows": 100,
+      "full_result_sha256": "33c4651f7f9659ccaa9e5dd4c222394440d6f319de7cc3bb53d0e1b518660f5e"
+    },
+    {
+      "rows_per_source": 2000,
+      "dense": false,
+      "baseline_seconds": 1.718544,
+      "optimized_seconds": 0.457708,
+      "all_result_fields_equal": true,
+      "compared_pairs": 200000,
+      "candidate_count": 2000,
+      "result_rows": 2000,
+      "full_result_sha256": "14fe5df855a935f2e079c4271f484d1b8b50087ed148e51496040ad05c2433dc"
+    },
+    {
+      "rows_per_source": 2000,
+      "dense": true,
+      "baseline_seconds": 27.975903,
+      "optimized_seconds": 5.863551,
+      "all_result_fields_equal": true,
+      "compared_pairs": 4000000,
+      "candidate_count": 0,
+      "result_rows": 2000,
+      "full_result_sha256": "b73626f2afe01489f6f262ccb72d5e85ffdf03c81d834badd4160af0efa98979"
+    }
+  ]
+}

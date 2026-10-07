@@ -1,0 +1,247 @@
+{
+  "measured_at": "2026-10-04T05:13:49Z",
+  "backend_commit": "085cd746eda7d7ce19f771f00f404614c5d34e91",
+  "application_sha256": "0367d82e89958c0579ec33acea95311710258bc958385601553ef16a4bc16ed2",
+  "lock_sha256": "3fc68c6cc89f5f20ce15b46ca11d619bf0e9c3ea1658ba03ce1b755bdc502549",
+  "python": "3.13.16",
+  "sqlite": "3.53.1",
+  "os": "Windows-11-10.0.26200-SP0",
+  "cpu": "AMD64 Family 23 Model 104 Stepping 1, AuthenticAMD",
+  "logical_cpus": 16,
+  "physical_memory_bytes": 16518443008,
+  "conditions": {
+    "percentile_method": "nearest-rank ceil(0.95*n); small-sample p95 equals max",
+    "case": "dense-max",
+    "profile_actions": true,
+    "transport": "real loopback HTTP, one Uvicorn process, disposable workers",
+    "source_rows": [
+      100,
+      2000
+    ],
+    "normal_distribution": "95% exact, 5% separator-only human suggestions",
+    "dense_distribution": "one identity group; dissimilar numbers; 4 million pairs",
+    "read_per_minute": 5000,
+    "mutation_per_minute": 1000,
+    "import_per_minute": 100,
+    "other_limits": "defaults: 60s worker, sampled 256 MiB child RSS, 1 worker, 5 pending"
+  },
+  "workloads": [
+    {
+      "rows_per_source": 2000,
+      "dense": true,
+      "imports": [
+        {
+          "bytes": 259935,
+          "upload_accept_ms": 78.104,
+          "parse_after_accept_ms": 2114.207,
+          "confirm_ms": 40.556
+        },
+        {
+          "bytes": 259935,
+          "upload_accept_ms": 63.234,
+          "parse_after_accept_ms": 1865.755,
+          "confirm_ms": 47.121
+        }
+      ],
+      "trials": [
+        {
+          "run_accept_ms": 46.793,
+          "run_complete_ms": 8327.374,
+          "summary_http": {
+            "samples": 5,
+            "median_ms": 28.092,
+            "p95_ms": 47.324,
+            "max_ms": 47.324
+          },
+          "golden_sha256": "4bb569ce8957d1dcaa31e89bef3db28a6fc25d1eca9a2faff83fef7def118542",
+          "counts": {
+            "MISSING_IN_SNAPSHOT": 2000
+          },
+          "tax_exposure_review": "360000.00",
+          "iteration": 1,
+          "database_bytes": 7557120,
+          "scratch_files_after_job": 0,
+          "process_tree_rss_after_job": 95752192
+        }
+      ]
+    }
+  ],
+  "measurement_complete": false,
+  "http_status_counts": {
+    "200": 373,
+    "202": 4,
+    "503": 13
+  },
+  "domain": {
+    "dense_2000_seconds": [
+      6.64631,
+      7.320856
+    ],
+    "profile_100": [
+      {
+        "function": "reconcile",
+        "calls": 1,
+        "total_seconds": 0.041244
+      },
+      {
+        "function": "key",
+        "calls": 900,
+        "total_seconds": 0.011801
+      },
+      {
+        "function": "identity",
+        "calls": 1300,
+        "total_seconds": 0.010716
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 6500,
+        "total_seconds": 0.006226
+      },
+      {
+        "function": "__init__",
+        "calls": 2,
+        "total_seconds": 0.005921
+      },
+      {
+        "function": "update",
+        "calls": 2,
+        "total_seconds": 0.005888
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 101,
+        "total_seconds": 0.002809
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 101,
+        "total_seconds": 0.002736
+      },
+      {
+        "function": "exact_number",
+        "calls": 1100,
+        "total_seconds": 0.002267
+      },
+      {
+        "function": "comparison_number",
+        "calls": 200,
+        "total_seconds": 0.002058
+      }
+    ]
+  },
+  "interruption": {
+    "type": "RuntimeError",
+    "message": "Benchmark job did not terminate within its observation deadline."
+  },
+  "health_http": {
+    "samples": 432,
+    "median_ms": 10.573,
+    "p95_ms": 32.12,
+    "max_ms": 1549.533
+  },
+  "health_failures": 10,
+  "peak_process_tree_rss_bytes": 146526208,
+  "action_profile": [
+    {
+      "function": "_run_once",
+      "calls": 1741,
+      "seconds": 169.875294
+    },
+    {
+      "function": "<method 'run' of '_contextvars.Context' objects>",
+      "calls": 2345,
+      "seconds": 38.901401
+    },
+    {
+      "function": "_run_sync_endpoint",
+      "calls": 90,
+      "seconds": 37.014059
+    },
+    {
+      "function": "detail",
+      "calls": 15,
+      "seconds": 33.800536
+    },
+    {
+      "function": "upsert",
+      "calls": 2000,
+      "seconds": 33.481775
+    },
+    {
+      "function": "source",
+      "calls": 2000,
+      "seconds": 32.804638
+    },
+    {
+      "function": "authenticated",
+      "calls": 14,
+      "seconds": 30.876573
+    },
+    {
+      "function": "identity",
+      "calls": 14,
+      "seconds": 26.989924
+    },
+    {
+      "function": "<method 'fetchone' of 'sqlite3.Cursor' objects>",
+      "calls": 10073,
+      "seconds": 12.755407
+    },
+    {
+      "function": "__enter__",
+      "calls": 102,
+      "seconds": 11.826888
+    },
+    {
+      "function": "select",
+      "calls": 1734,
+      "seconds": 8.555225
+    },
+    {
+      "function": "_poll",
+      "calls": 1734,
+      "seconds": 4.965812
+    },
+    {
+      "function": "<built-in method builtins.next>",
+      "calls": 234,
+      "seconds": 2.285482
+    },
+    {
+      "function": "publish",
+      "calls": 2,
+      "seconds": 2.194933
+    },
+    {
+      "function": "<built-in method psutil_windows.ppid_map>",
+      "calls": 98,
+      "seconds": 1.914969
+    },
+    {
+      "function": "<built-in method _overlapped.GetQueuedCompletionStatus>",
+      "calls": 2153,
+      "seconds": 1.836995
+    },
+    {
+      "function": "_run",
+      "calls": 2035,
+      "seconds": 1.709765
+    },
+    {
+      "function": "publish",
+      "calls": 2,
+      "seconds": 1.058261
+    },
+    {
+      "function": "wait",
+      "calls": 108,
+      "seconds": 1.014401
+    },
+    {
+      "function": "encode",
+      "calls": 6000,
+      "seconds": 0.626983
+    }
+  ]
+}
