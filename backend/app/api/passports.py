@@ -127,8 +127,41 @@ def command(request, workspace_id, passport_id, payload, method, kind=None):
         if kind
         else getattr(service(request), method)(*args)
     )
+    if method == "confirm":
+        try:
+            request.app.state.processes.create(
+                identity,
+                str(workspace_id),
+                {"passport_id": str(passport_id), "batch_id": None},
+                request_key(request),
+            )
+        except APIError as exc:
+            # Confirmation is already saved. Preserve a recoverable automation status.
+            with service(request).store.transaction() as con:
+                service(request).authorize(con, identity, str(workspace_id))
+                service(request).event(
+                    con,
+                    identity,
+                    str(workspace_id),
+                    str(passport_id),
+                    "AUTO_PROCESS_DELAYED",
+                    {"code": exc.code, "message": exc.message},
+                )
     if method in {"confirm", "evidence", "simulate_fetch", "details"}:
         service(request).ensure_comparison(identity, str(workspace_id), str(passport_id))
+    try:
+        request.app.state.processes.sync_invoice(identity, str(workspace_id), str(passport_id))
+    except APIError as exc:
+        with service(request).store.transaction() as con:
+            service(request).authorize(con, identity, str(workspace_id))
+            service(request).event(
+                con,
+                identity,
+                str(workspace_id),
+                str(passport_id),
+                "AUTO_PROCESS_DELAYED",
+                {"code": exc.code, "message": exc.message},
+            )
     return envelope(request, result)
 
 
@@ -185,6 +218,11 @@ def simulate(
     request: Request, workspace_id: UUID, passport_id: UUID, payload: models.FetchSimulation
 ):
     return command(request, workspace_id, passport_id, payload, "simulate_fetch")
+
+
+@router.post("/{passport_id}/remove", response_model=models.PassportResponse)
+def remove(request: Request, workspace_id: UUID, passport_id: UUID, payload: models.RemoveInvoice):
+    return command(request, workspace_id, passport_id, payload, "remove")
 
 
 @router.post("/{passport_id}/refresh", response_model=models.PassportResponse)
@@ -331,3 +369,36 @@ def demo_bank_payment(
     request: Request, workspace_id: UUID, passport_id: UUID, payload: models.DemoBankPayment
 ):
     return command(request, workspace_id, passport_id, payload, "demo_bank_payment")
+
+
+@router.post("/{passport_id}/evidence-documents", response_model=models.IntelligenceResponse)
+async def evidence_document(request: Request, workspace_id: UUID, passport_id: UUID):
+    identity = authenticated(request, mutation=True)
+    svc, ws = service(request), str(workspace_id)
+    svc.imports.authorize(identity, ws, mutation=True)
+    key = request_key(request)
+    form = await bounded_upload(request, svc.settings)
+    try:
+        if (
+            len(form.multi_items()) != 3
+            or set(form.keys()) != {"file", "kind", "consent"}
+            or not isinstance(form["file"], UploadFile)
+        ):
+            raise APIError(
+                422, "UPLOAD_FIELDS", "Choose a supporting file, its type and AI consent."
+            )
+        content = await form["file"].read(svc.settings.max_upload_bytes + 1)
+        result = await run_in_threadpool(
+            svc.extract_commercial_document,
+            identity,
+            ws,
+            str(passport_id),
+            str(form["kind"]),
+            content,
+            form["file"].filename or "supporting-record",
+            form["consent"] == "true",
+            key,
+        )
+        return envelope(request, result)
+    finally:
+        await form.close()

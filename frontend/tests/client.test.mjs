@@ -257,3 +257,66 @@ test("read errors expose bounded server retry hints without retrying mutations",
     globalThis.fetch = original;
   }
 });
+
+test("multipart requests never coalesce different months or same-size different contents", async () => {
+  const original = globalThis.fetch;
+  const calls = [];
+  try {
+    globalThis.fetch = async (_, options) => {
+      calls.push(options);
+      return Response.json({ data: { period: options.body.get("period") } });
+    };
+    const api = new ApiClient("http://localhost:8000");
+    const make = (period, contents) => {
+      const form = new FormData();
+      form.append("registration_id", "registration");
+      form.append("period", period);
+      form.append(
+        "file",
+        new File([contents], "same.csv", { lastModified: 1 }),
+      );
+      return form;
+    };
+    await Promise.all([
+      api.upload(
+        "/api/v1/workspaces/a/imports",
+        make("2024-05", "abc"),
+        "same",
+      ),
+      api.upload(
+        "/api/v1/workspaces/a/imports",
+        make("2024-06", "abc"),
+        "same",
+      ),
+      api.upload(
+        "/api/v1/workspaces/a/imports",
+        make("2024-05", "xyz"),
+        "same",
+      ),
+    ]);
+    assert.equal(calls.length, 3);
+    assert.equal(
+      new Set(calls.map((c) => c.headers["Idempotency-Key"])).size,
+      3,
+    );
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test("oversized upload is rejected before reading file bytes", async () => {
+  const form = new FormData();
+  form.append("file", new File([new Uint8Array(5 * 1024 * 1024)], "large.pdf"));
+  const file = form.get("file");
+  let read = false;
+  file.arrayBuffer = async () => {
+    read = true;
+    throw new Error("must not read");
+  };
+  const api = new ApiClient("http://localhost:8000");
+  await assert.rejects(
+    api.upload("/api/v1/workspaces/a/passports/documents", form, "file"),
+    (error) => error.code === "FILE_SIZE",
+  );
+  assert.equal(read, false);
+});

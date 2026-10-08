@@ -12,12 +12,14 @@ export type Context = {
   workspace: Schemas["WorkspaceData"];
   registration: Schemas["RegistrationData"];
   period: string;
+  staffRole?: string;
 };
 
 export const path = (c: Context, suffix: string) =>
   `/api/v1/workspaces/${c.workspace.id}/${suffix}`;
 
-export const writable = (c: Context) => c.workspace.role !== "VIEWER";
+export const writable = (c: Context) =>
+  c.workspace.role !== "VIEWER" && c.staffRole !== "OWNER";
 
 export const text = (value: unknown): string =>
   value === null || value === undefined
@@ -29,16 +31,18 @@ export const text = (value: unknown): string =>
 export const label = (value: string) =>
   value
     .replaceAll("_", " ")
+    .replace(/\bdemo\b/gi, "simulated")
     .toLowerCase()
     .replace(/^./, (c) => c.toUpperCase());
 
 const amountFormatter = new Intl.NumberFormat("en-IN");
 
 export function money(value: unknown) {
-  if (typeof value !== "string" || !/^-?\d+\.\d{2}$/.test(value))
+  if (typeof value !== "string" || !/^-?\d+(\.\d{1,2})?$/.test(value))
     return "Unknown";
 
-  const [whole, fraction] = value.split(".");
+  const [whole, rawFraction = "00"] = value.split(".");
+  const fraction = rawFraction.padEnd(2, "0");
   const integer = whole === "-0" ? "-0" : amountFormatter.format(BigInt(whole));
   return `₹${integer}.${fraction}`;
 }

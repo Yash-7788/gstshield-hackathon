@@ -108,22 +108,35 @@ class PassportConfirm(Input):
     fields: InvoiceFields
 
 
+class CommercialLineItem(LineItem):
+    taxable_value: Money | None = None
+
+
 class CommercialEvidence(Input):
+    document_proposal_id: UUID | None = None
     expected_version: StrictInt = Field(ge=1)
     kind: Literal["PO", "RECEIPT"]
     reference: str = Field(min_length=1, max_length=128)
-    taxable_value: Money
+    taxable_value: Money | None = None
     quantity: Quantity | None = None
     observed_on: date
     note: str = Field(default="", max_length=1000)
-    items: list[LineItem] = Field(default_factory=list, max_length=100)
+    items: list[CommercialLineItem] = Field(default_factory=list, max_length=100)
 
     @model_validator(mode="after")
     def item_totals(self):
         from decimal import Decimal
 
-        if self.items and sum(Decimal(item.taxable_value) for item in self.items) != Decimal(
-            self.taxable_value
+        if self.kind == "PO" and (
+            self.taxable_value is None or any(i.taxable_value is None for i in self.items)
+        ):
+            raise ValueError("Purchase order goods values are required")
+        if (
+            self.taxable_value is not None
+            and self.items
+            and all(i.taxable_value is not None for i in self.items)
+            and sum(Decimal(item.taxable_value) for item in self.items)
+            != Decimal(self.taxable_value)
         ):
             raise ValueError("Item values must add up to the recorded goods value")
         return self
@@ -136,13 +149,26 @@ class ClockEvidence(Input):
     agreed_days: int | None = Field(default=None, ge=1, le=45)
     claimed_on: date | None = None
     supplier_3b_due_on: date | None = None
-    amount_paid: Money = "0.00"
+    amount_paid: Money | None = None
+    payment_observed_on: date | None = None
+
+    @model_validator(mode="after")
+    def observed_payment_date(self):
+        if self.payment_observed_on and self.payment_observed_on > date.today():
+            raise ValueError("Payment observation cannot be in the future")
+        return self
+
     note: str = Field(default="", max_length=1000)
 
 
 class PortalSelection(Input):
     expected_version: StrictInt = Field(ge=1)
     import_id: UUID
+
+
+class RemoveInvoice(Input):
+    expected_version: StrictInt = Field(ge=1)
+    target: Literal["ORIGINAL_FILE", "INVOICE"]
 
 
 class GateApproval(Input):
@@ -180,6 +206,8 @@ class PassportData(BaseModel):
     period: str
     version: int
     confirmed: bool
+    removed: bool = False
+    original_available: bool = False
     filename: str
     fields: dict[str, Any]
     extraction: dict[str, Any]
@@ -290,3 +318,13 @@ class DemoBankPayment(Input):
     expected_version: StrictInt = Field(ge=1)
     source_signature: str = Field(pattern=r"^[a-f0-9]{64}$")
     amount: Money
+
+
+class ExtractedCommercial(Input):
+    document_kind: Literal["PO", "RECEIPT", "OTHER"]
+    reference: str | None = Field(default=None, max_length=128)
+    observed_on: str | None = Field(default=None, max_length=32)
+    taxable_value: str | None = Field(default=None, max_length=32)
+    quantity: str | None = Field(default=None, max_length=32)
+    items: list[ExtractedLineItem] = Field(default_factory=list, max_length=100)
+    uncertainties: list[str] = Field(default_factory=list, max_length=20)

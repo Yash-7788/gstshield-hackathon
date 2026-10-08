@@ -7,9 +7,10 @@ logger = logging.getLogger("gstshield")
 
 
 class ActionMonitor:
-    def __init__(self, actions, passports=None):
+    def __init__(self, actions, passports=None, processes=None):
         self.actions = actions
         self.passports = passports
+        self.processes = processes
         self.stop_event = threading.Event()
         self.thread = threading.Thread(target=self.run, name="gstshield-actions", daemon=True)
         self.cursor = ""
@@ -26,6 +27,8 @@ class ActionMonitor:
             self.actions.refresh(row["id"])
             if self.passports is not None:
                 self.passports.scan(row["id"])
+            if self.processes is not None:
+                self.processes.scan(row["id"])
 
     def start(self):
         # Synchronous bounded catch-up before readiness; the thread rotates other workspaces.

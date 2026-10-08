@@ -4,7 +4,7 @@ import { ApiClient, apiOrigin } from "./client";
 
 import type { Schemas } from "./contracts";
 
-import { Notice, useCommand, useResource } from "./shared";
+import { Notice, useCommand, useResource, path } from "./shared";
 
 import type { Context } from "./shared";
 
@@ -20,28 +20,50 @@ import Proposals from "./Proposals";
 
 import Reports from "./Reports";
 import WhatsApp from "./WhatsApp";
-import CommandCenter from "./CommandCenter";
 import InvoiceJourney from "./InvoiceJourney";
+import GuidedHelp from "./GuidedHelp";
+import Today from "./Today";
+import TeamWorkspace from "./TeamWorkspace";
+import Assistants from "./Assistants";
+import ProcessWorkspace from "./ProcessWorkspace";
+import { Schemes } from "./ProductDirectories";
+import { roleNames } from "./product";
+import RoleHome from "./RoleHome";
+import { workspaceSections, deskFor, sectionsFor, homeFor } from "./workspace";
+import OwnerOverview from "./OwnerOverview";
+import FocusedInvoiceDesk from "./FocusedInvoiceDesk";
+import { BusinessForm } from "./OwnerWorkspace";
+import type { Business } from "./product";
+import type { Portal } from "./product";
 
 function sectionFromHash() {
   try {
     const value = decodeURIComponent(location.hash.slice(1));
-    return sections.includes(value) ? value : "Invoice desk";
+    return sections.includes(value) ? value : "";
   } catch {
-    return "Invoice desk";
+    return "";
   }
 }
 
-const sections = [
-  "Invoice desk",
-  "Sources",
-  "Reconciliation",
-  "Cases & evidence",
-  "Work queue",
-  "Payment drafts",
-  "Reports",
-  "WhatsApp",
-];
+const sections = workspaceSections;
+
+const sectionDescriptions: Record<string, string> = {
+  Assistants: "Understand the saved facts through your approved role.",
+  "Shared process": "Move each invoice through a checked, shared review.",
+  "Business setup": "Set company facts once. Your team reuses them.",
+  "Owner desk": "Understand your business and its current priorities.",
+  "Team desk": "Work together and see what changed.",
+  Today: "See what needs your attention and why.",
+  "Invoice desk":
+    "Start with a bill. Follow its records, review and next step.",
+  Sources: "Bring the records together before comparing them.",
+  Reconciliation: "See what agrees, what differs and what needs another look.",
+  "Cases & evidence": "Keep the facts and correction history in one place.",
+  "Work queue": "See what needs attention and move the next step forward.",
+  "Payment drafts": "Review the evidence before approving a payment proposal.",
+  Reports: "Turn saved records into a clear, reviewable account.",
+  WhatsApp: "Keep supplier follow-ups connected to the invoice history.",
+};
 
 function Login({
   api,
@@ -51,12 +73,43 @@ function Login({
   onSession: (s: Schemas["SessionData"]) => void;
 }) {
   const action = useCommand();
+  const [entry, setEntry] = useState(
+    new URLSearchParams(location.search).get("portal") === "team"
+      ? "team"
+      : "owner",
+  );
 
   return (
     <main className="login">
-      <span className="eyebrow">Your GST evidence workspace</span>
-      <h1>GSTShield</h1>
-      <p>Keep your invoices, review history and next actions together.</p>
+      <a className="login-brand" href="/landing.html">
+        GST<span>SHIELD</span>
+      </a>
+      <span className="eyebrow">GSTShield · Your invoice workspace</span>
+      <h1>
+        {entry === "owner"
+          ? "Your business, in focus."
+          : "Your team workspace."}
+      </h1>
+      <div className="portal-choice">
+        <button
+          type="button"
+          className={entry === "owner" ? "" : "secondary"}
+          onClick={() => setEntry("owner")}
+        >
+          Business owner
+        </button>
+        <button
+          type="button"
+          className={entry === "team" ? "" : "secondary"}
+          onClick={() => setEntry("team")}
+        >
+          Team member
+        </button>
+      </div>
+      <p>
+        Pick up where you left off. Keep the bill, its supporting records and
+        the next decision together.
+      </p>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -66,8 +119,13 @@ function Login({
               api.auth<Schemas["SessionData"]>("/api/v1/auth/login", {
                 username: data.get("username"),
                 password: data.get("password"),
+                portal: entry,
               }),
-            onSession,
+            (session) => {
+              sessionStorage.removeItem("gstshield_selection");
+              history.replaceState(null, "", location.pathname);
+              onSession(session);
+            },
           );
         }}
       >
@@ -77,7 +135,7 @@ function Login({
             name="username"
             autoComplete="username"
             required
-            minLength={3}
+            minLength={1}
             maxLength={64}
           />
         </label>
@@ -88,7 +146,7 @@ function Login({
             type="password"
             autoComplete="current-password"
             required
-            minLength={12}
+            minLength={1}
             maxLength={128}
           />
         </label>
@@ -98,8 +156,8 @@ function Login({
         {action.feedback}
       </form>
       <p className="muted">
-        Use the account created by your local operator. This demonstration runs
-        on your PC.
+        Owners manage the team. Team members sign in only after the owner
+        creates their account and assigns a role.
       </p>
     </main>
   );
@@ -147,7 +205,10 @@ function Workspace({
   const [remembered] = useState(() => rememberedSelection(user.user_id));
   const [workspaceId, setWorkspace] = useState(remembered.workspace_id);
   const selected =
-    workspaces.data?.find((w) => w.id === workspaceId) || workspaces.data?.[0];
+    workspaces.data?.find((w) => w.id === workspaceId) ||
+    workspaces.data?.find((w) => w.role === "OWNER") ||
+    workspaces.data?.find((w) => w.role === "REVIEWER") ||
+    workspaces.data?.[0];
 
   const registrations = useResource<Schemas["RegistrationData"][]>(
     api,
@@ -162,8 +223,27 @@ function Workspace({
     registrations.data?.[0];
 
   const [period, setPeriod] = useState(remembered.period);
-
-  const [section, setSection] = useState(sectionFromHash);
+  const approvedPortal = useResource<Portal>(
+    api,
+    selected ? `/api/v1/workspaces/${selected.id}/product/portal` : null,
+    15000,
+  );
+  const workingRole = approvedPortal.data?.roles[0];
+  const allowedSections = sectionsFor(workingRole);
+  const [requestedSection, setSection] = useState(sectionFromHash);
+  const section = allowedSections.includes(requestedSection)
+    ? requestedSection
+    : homeFor(workingRole);
+  useEffect(() => {
+    if (approvedPortal.data && !allowedSections.includes(requestedSection)) {
+      setSection(homeFor(workingRole));
+      history.replaceState(
+        null,
+        "",
+        `${location.pathname}#${encodeURIComponent(homeFor(workingRole))}`,
+      );
+    }
+  }, [workingRole, requestedSection, approvedPortal.data]);
   const [invoiceFocus, setInvoiceFocus] = useState<{
     scope: string;
     id: string;
@@ -172,11 +252,19 @@ function Workspace({
   const focusedInvoice =
     invoiceFocus?.scope === scope ? invoiceFocus.id : undefined;
   const navigateInvoice = (destination: string, id: string) => {
-    setInvoiceFocus({ scope, id });
+    setInvoiceFocus(id ? { scope, id } : null);
     setSection(destination);
     location.hash = encodeURIComponent(destination);
   };
   const heading = useRef<HTMLHeadingElement>(null);
+  const primary = deskFor(workingRole)
+    .primary.filter((name) => allowedSections.includes(name))
+    .slice(0, 3);
+  const secondary = allowedSections.filter((name) => !primary.includes(name));
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [section, workingRole]);
 
   useEffect(() => {
     const change = () => {
@@ -191,7 +279,14 @@ function Workspace({
     registration &&
     !period.startsWith("0000") &&
     /^\d{4}-(0[1-9]|1[0-2])$/.test(period)
-      ? { api, user, workspace: selected, registration, period }
+      ? {
+          api,
+          user,
+          workspace: selected,
+          registration,
+          period,
+          staffRole: workingRole,
+        }
       : null;
 
   useEffect(() => {
@@ -213,7 +308,7 @@ function Workspace({
   const key = `${user.user_id}:${selected?.id}:${selected?.role}:${registration?.id}:${period}:${section}`;
 
   return (
-    <div className="app">
+    <div className="app" data-role={workingRole || "OBSERVER"}>
       <a
         className="skip-link"
         href="#workspace-content"
@@ -224,10 +319,15 @@ function Workspace({
       >
         Skip to workspace content
       </a>
-      <header>
+      <header className="workspace-header">
         <div>
-          <strong className="brand">GSTShield</strong>
-          <span className="muted">Evidence → review → next action</span>
+          <a className="brand" href="/landing.html">
+            <span className="brand-mark" aria-hidden="true">
+              S
+            </span>{" "}
+            GST<span>SHIELD</span>
+          </a>
+          <span className="muted">Pay the vendor. Keep the credit.</span>
         </div>
         <div>
           <span>{user.username}</span>{" "}
@@ -281,23 +381,87 @@ function Workspace({
             }}
           />
         </label>
+        {approvedPortal.data && (
+          <div className="role-selector">
+            <span className="eyebrow">Assigned role</span>
+            <strong>
+              {roleNames[workingRole || "OBSERVER"] ||
+                "Owner must set one role"}
+            </strong>
+          </div>
+        )}
       </div>
       <div className="layout">
-        <nav aria-label="Workspace sections">
-          {sections.map((name) => (
-            <a
-              key={name}
-              href={`#${encodeURIComponent(name)}`}
-              aria-current={section === name ? "page" : undefined}
+        <nav className="workspace-nav" aria-label="Workspace sections">
+          <div className="nav-primary">
+            {primary.map((name, index) => (
+              <a
+                key={name}
+                href={`#${encodeURIComponent(name)}`}
+                aria-current={section === name ? "page" : undefined}
+                onClick={() => setMoreOpen(false)}
+              >
+                <span className="nav-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                {name}
+              </a>
+            ))}
+          </div>
+          {!!secondary.length && (
+            <div
+              className="nav-more"
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setMoreOpen(false);
+                  e.currentTarget.querySelector("button")?.focus();
+                }
+              }}
             >
-              {name}
-            </a>
-          ))}
+              <button
+                type="button"
+                aria-expanded={moreOpen}
+                aria-controls="workspace-tools-index"
+                onClick={() => setMoreOpen((open) => !open)}
+              >
+                More tools{" "}
+                <span aria-hidden="true">{moreOpen ? "−" : "+"}</span>
+              </button>
+              {moreOpen && (
+                <div className="tools-index" id="workspace-tools-index">
+                  <p>Supporting tools for your assigned role.</p>
+                  {secondary.map((name) => (
+                    <a
+                      key={name}
+                      href={`#${encodeURIComponent(name)}`}
+                      aria-current={section === name ? "page" : undefined}
+                    >
+                      {name}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
-        <main>
-          <h1 id="workspace-content" ref={heading} tabIndex={-1}>
-            {section}
-          </h1>
+        <main data-section={section}>
+          <div className="page-heading">
+            <div>
+              <span className="eyebrow">
+                {registration?.display_name || "Your company"} · {period}
+              </span>
+              <h1 id="workspace-content" ref={heading} tabIndex={-1}>
+                {section}
+              </h1>
+              <p className="section-intro">{sectionDescriptions[section]}</p>
+            </div>
+            <span className="page-stamp">
+              {workingRole
+                ? roleNames[workingRole] || "Team view"
+                : "Loading your role…"}
+            </span>
+          </div>
           {workspaces.error && (
             <Notice error>
               {workspaces.error}{" "}
@@ -310,17 +474,25 @@ function Workspace({
               <button onClick={registrations.reload}>Retry</button>
             </Notice>
           )}
-          {!context ? (
+          {!context || !approvedPortal.data ? (
             <Notice>
-              {workspaces.loading || registrations.loading
+              {workspaces.loading ||
+              registrations.loading ||
+              approvedPortal.loading
                 ? "Loading your permitted workspace…"
                 : "Select a workspace, registration and valid accounting month. Ask the operator if none is listed."}
             </Notice>
           ) : (
-            <section key={key + ":" + (focusedInvoice || "all")}>
+            <section
+              key={key + ":" + workingRole + ":" + (focusedInvoice || "all")}
+            >
               {selected?.role === "VIEWER" && (
-                <Notice>You have read-only access.</Notice>
+                <Notice>
+                  Financial records are read-only. Your approved shared-work
+                  actions remain available.
+                </Notice>
               )}
+              {workingRole !== "OWNER" && <GuidedHelp c={context} />}
               <InvoiceJourney
                 c={context}
                 invoiceId={
@@ -331,8 +503,50 @@ function Workspace({
               >
                 {(workflow) => (
                   <>
+                    {section === "Owner desk" && (
+                      <>
+                        <OwnerOverview c={context} />
+                        <Schemes c={context} />
+                      </>
+                    )}
+                    {section === "Business setup" && (
+                      <BusinessSetup c={context} />
+                    )}
+                    {section === "Team desk" && (
+                      <>
+                        {workingRole !== "OWNER" && (
+                          <RoleHome
+                            c={context}
+                            role={workingRole}
+                            navigate={navigateInvoice}
+                          />
+                        )}
+                        <TeamWorkspace
+                          c={context}
+                          workingRole={workingRole}
+                          approvedPortal={approvedPortal.data || undefined}
+                        />
+                      </>
+                    )}
+                    {section === "Assistants" && (
+                      <Assistants
+                        key={workingRole}
+                        c={context}
+                        initialRole={workingRole}
+                        approvedPortal={approvedPortal.data || undefined}
+                      />
+                    )}
+                    {section === "Shared process" && (
+                      <ProcessWorkspace
+                        c={context}
+                        navigate={navigateInvoice}
+                      />
+                    )}
+                    {section === "Today" && (
+                      <Today c={context} navigate={navigateInvoice} />
+                    )}
                     {section === "Invoice desk" && (
-                      <CommandCenter
+                      <FocusedInvoiceDesk
                         c={context}
                         initialInvoiceId={focusedInvoice}
                         navigate={navigateInvoice}
@@ -367,6 +581,32 @@ function Workspace({
   );
 }
 
+function BusinessSetup({ c }: { c: Context }) {
+  const business = useResource<Business>(
+    c.api,
+    path(
+      c,
+      `product/business?registration_id=${c.registration.id}&period=${c.period}`,
+    ),
+  );
+  return (
+    <>
+      <Notice>
+        Company facts are entered once. Revenue and salaries cannot be
+        calculated from a supplier bill.
+      </Notice>
+      {business.data && (
+        <BusinessForm
+          key={business.data.version}
+          c={c}
+          business={business.data}
+          reload={business.reload}
+        />
+      )}
+    </>
+  );
+}
+
 export default function App() {
   const [session, setSession] = useState<Schemas["SessionData"] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -390,6 +630,7 @@ export default function App() {
   }, []);
 
   const api = setup.api;
+  const [signingOut, setSigningOut] = useState(false);
 
   if (api)
     api.onExpired = () => {
@@ -461,8 +702,11 @@ export default function App() {
     );
 
   const logout = () => {
+    if (signingOut) return;
+    setSigningOut(true);
     sessionStorage.setItem("gstshield_signed_out", "1");
     sessionStorage.removeItem("gstshield_selection");
+    history.replaceState(null, "", location.pathname);
     setSession(null);
     const signout = new ApiClient(api.base);
     signout.csrf = api.csrf;
@@ -474,13 +718,18 @@ export default function App() {
         setMessage(
           "Private screens are cleared. Server sign-out could not be confirmed; the cookie remains valid until expiry or operator revocation. Explicit sign-in is required here.",
         ),
-      );
+      )
+      .finally(() => setSigningOut(false));
   };
 
   return (
     <>
       {message && <Notice>{message}</Notice>}
-      {session ? (
+      {signingOut ? (
+        <main className="login">
+          <Notice>Signing out…</Notice>
+        </main>
+      ) : session ? (
         <Workspace
           key={session.user_id}
           api={api}

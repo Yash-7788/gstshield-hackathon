@@ -1,10 +1,11 @@
 # GSTShield
 
-This repository publishes the current GSTShield source snapshot on 7 October 2026. Repository creation is not the original development date. It includes the invoice desk, confirmed AI extraction, item-level evidence checks, automatic confirmed-source comparison, connected cases/payment drafts, supplier and finance workflows, and the simulated bank gateway. See the dated build plan and manual testing guide for current scope and verification.
+Latest usability/access correction (8 October 2026): one assigned role per teammate, owner oversight, progressive OCR invoice/proof review and monthly GST reuse. See [the simple role guide and input inventory](demo/ROLE_SIMPLIFIED_GUIDE.md) and [dated verification ledger](md/13_ROLE_AND_INPUT_SIMPLIFICATION.md). The older acceptance notes below describe earlier checkpoints.
 
-Start the local backend and frontend using their setup guides. Configure backend-only credentials in your private `.env` where needed. Demo invoice/statement files are included; private databases, uploaded taxpayer documents, credentials and installed dependencies are excluded. Real government fetching/filing, bank execution and physical WhatsApp delivery are not established by the simulations or local tests.
+> Current local acceptance: six pillars are implemented and verified for the hackathon scope. The workspace now uses saturated floral canvases, book tabs and role-specific ledgers; see the dated corrective UI acceptance below the earlier visual notes. See [final role acceptance](md/12_ROLE_WORKSPACE_UI_PLAN.md) for exact full-run/retry results and limits, and [demo logins and walkthrough](demo/ROLE_DEMO_GUIDE.md). The supplied landing design is integrated at `/landing.html`.
 
-Hackathon website with a local FastAPI backend and private SQLite storage. Phases 1–7 implement and verify the backend workflows/security; Phase 8 supplies the internal React workspace. Phase 9 connects and verifies the real website/backend journeys. WhatsApp remains Phase 13, and the separately supplied landing page/design comes later. See [frontend setup](frontend/README.md) and [backend setup](backend/README.md).
+
+Hackathon website with a local FastAPI backend, private SQLite storage, React workspace and the supplied HTML landing. Owner/team entry, scoped assistants and shared invoice processes extend the existing imports, reconciliation, cases, payment drafts and reports. Local WhatsApp groundwork is implemented; external delivery requires configured providers. See [frontend setup](frontend/README.md) and [backend setup](backend/README.md).
 
 ## Start here
 
@@ -109,3 +110,33 @@ Phase 12 preserves forms and filters during same-context refresh, reduces redund
 Local WhatsApp commands, signed callbacks, durable inbox/outbox, supplier consent and website controls are implemented. **This is a work-in-progress checkpoint, not completed Phase 13 acceptance.** Meta setup/HTTPS callback/physical-phone proof remain pending. Default WHATSAPP_ENABLED=false and send budget zero; no real messages or tunnel were created. Existing storage now needs an explicit offline, validated/backed-up `python -m app.manage storage-upgrade` from backend/ to reach schema 6. Never delete the old database; the presenter store was not changed here.
 
 The initial channel/provider set passed 29 tests; the final added ambiguity check passed separately. Browser run: 24 passed, one blank-page failure before login; follow-up startup also failed. Full regression was stopped at the user's request and must not be claimed as passed. See [the build plan](md/05_BUILD_AND_VERIFICATION_PLAN.md) for exact scope, remaining checks and physical acceptance (use ../md/ from component folders). Git checkpoint skips CI to respect the request not to run regression now.
+
+
+## Six-pillar local product extension: 7 October 2026
+
+This section supersedes earlier roadmap statements about the owner/team portals. The code now includes six pillars. Acceptance is tracked in `md/11_FIVE_PILLARS_IMPLEMENTATION_PLAN.md`; a passing focused check is not a full regression pass.
+
+1. Financial guidance: plain-language glossary, five saved-fact digital staff views, daily priorities, invoice checklist and supported purchase-register / GSTR-2B-file onboarding.
+2. Invoice review: existing OCR, item-level four-way checks, Passport, payment gate, supplier follow-up, reports and evidence; six cited review signals and a competitor table with unverified cells explicitly left open.
+3. Scoped assistants: CFO, CMA, CMO, CA, CEO, COO and CTO use their permitted saved facts. AI explanation is optional and does not decide money or eligibility.
+4. Shared process: ten sequential invoice/batch steps, assignments, due dates, handoff notes, local notifications and audited completion. Changed evidence reopens affected work and makes old approvals/reviews stale.
+5. Legal tax review: deterministic cited suggestions, known amount ranges or UNKNOWN, missing facts and explicit CA review. Nothing is filed. No guaranteed savings or loan approval.
+6. Owner/team portals: landing sign-in choices, approved-role selection, monthly business/workforce inputs, private individual salaries, repeated-role account creation, role changes, shared work updates and official scheme directories.
+
+### Run and use
+
+Stop the backend before upgrading an existing store. From `backend`, run `python -m app.manage storage-upgrade`, then the supported `python -m app` launcher. The upgrade validates old storage and preserves a backup before adding schema 8 tables. Start the frontend as documented in its README. Open `/landing.html` for the brand page and sign-in choice; `/` opens the workspace.
+
+Owners enter known monthly business figures and create team accounts. Team members choose only roles the owner assigned. CA reviewers start with Invoice desk, confirm extraction, add order/delivery facts and a downloaded statement, then review findings and decisions. Shared process exposes the checked handoffs. Another CA in that workspace sees the same progress. A role picker does not grant access.
+
+### Supported new source formats
+
+The five-column purchase CSV uses GSTIN, invoice number, date, taxable value and tax. Selecting it declares invoice-only rows with no additional charges or rounding. The reported total tax is preserved; its component split stays unknown. It cannot silently become a fully verified exact match.
+
+Downloaded GSTR-2B JSON supports the documented B2B invoice shapes under `data.docdata.b2b` or `docdata.b2b`. Its recipient GSTIN and month must match the selected context. The parser preserves decimal amounts. Non-empty unsupported categories are rejected rather than dropped. Availability restrictions are flagged for review. CSV/XLSX mapping remains available for other supported exports. This is file import, not live government fetching.
+
+### Boundaries
+
+Bank release and sample GST fetching remain simulations. There is no real escrow, bank transfer or GST-portal submission. IMS actions remain NOT_SUBMITTED and notice responses remain drafts for review. A format-valid IRN is not government authentication. Supplier promises do not establish a correction; the saved evidence must pass a recheck.
+
+The scheme directory links PMMY and CGTMSE to official sources; eligibility and interest depend on verified facts and lenders. Legacy 43B(h) references are review-only pending current-period mapping. A controlled payment is not automatically a legal tax-saving strategy. Unknown figures remain unknown. Configured local account, storage and history limits still apply.

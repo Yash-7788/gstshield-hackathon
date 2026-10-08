@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GSTShield: Check the evidence before you pay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=Rajdhani:wght@500;700&display=swap">
+<link rel="stylesheet" href="/src/landing.css">
+</head>
+<body>
+<header id="top"><a href="#hero" class="lg" id="lgo" aria-label="GST-Shield home"><svg viewBox="-1.12 -1.12 2.24 2.24"><defs><linearGradient id="lgg" x1="0" y1="-1" x2="0" y2="1"><stop offset="0" stop-color="#ffd877"/><stop offset="1" stop-color="#ff8a00"/></linearGradient></defs><circle r="1.04" fill="none" stroke="#ff9f1c" stroke-width=".05" opacity=".55"/><path id="lp" fill="none" stroke="url(#lgg)" stroke-width=".21" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wm"><b>GST</b><b>Shield</b></span></a>
+<div class="tr"><button class="tl portal-open" id="portal-open">Sign in</button><a class="tl" href="#lab">Try the examples</a><button id="mb" aria-label="Open menu" aria-controls="mn" aria-expanded="false"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="rgba(244,234,210,.28)" stroke-width="2"/><circle id="ring" cx="22" cy="22" r="20" fill="none" stroke="#ff9f1c" stroke-width="2.4" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 22 22)"/></svg><i></i><i></i></button></div></header>
+<div id="mn" inert aria-hidden="true"><div><a href="#book"><small>01</small>Six review checks</a><a href="#lab"><small>02</small>Explore the checks</a><a href="#how"><small>03</small>How it works</a><a href="#price"><small>04</small>Pricing</a><a href="/?portal=owner#Owner%20desk"><small>05</small>Owner desk</a><a href="/?portal=team#Team%20desk"><small>06</small>Team desk</a><p>GST-Shield, a hackathon prototype for Indian accounts teams.</p></div></div>
+<dialog id="portal-dialog"><button type="button" id="portal-close" aria-label="Close sign-in choices">Close</button><h2>Choose your desk.</h2><p>One business, shared records. Your account controls what you can do.</p><a href="/?portal=owner#Owner%20desk"><strong>Business owner</strong><span>Business figures, priorities and team progress.</span></a><a href="/?portal=team#Team%20desk"><strong>Team member</strong><span>Your approved role, shared tasks and invoice review.</span></a></dialog>
+<div id="tip"></div>
+
+<section id="hero">
+ <div class="bgl"></div>
+ <div id="hi">
+  <h1 class="rz"><span class="ln"><span>Check the bill.</span></span><span class="ln"><span>Before you pay.</span></span></h1>
+  <p class="sub fi">Check supplier bills against orders, deliveries and GST records before approving payment. Keep every correction and its evidence together.</p>
+  <div class="bs fi"><a class="cb" href="#lab">Try an invoice check<i></i></a><a class="ul" href="#how">How it works<span class="arw"></span></a></div>
+ </div>
+ <div id="rangoli-stage" aria-hidden="true"><canvas id="kc"></canvas><i id="bd"></i></div>
+ <p class="hint fi">Move your cursor to draw a rangoli</p>
+</section>
+
+<section id="book">
+ <div class="stage"><div class="bgl"></div>
+  <div class="sh"><h2 class="rz">Six checks.</h2><p>Missing tax records, payment deadlines, forgotten reversals and more. Scroll to see what each check does.</p></div>
+  <div class="bk" id="bk"></div>
+ </div>
+</section>
+
+<section id="lab" class="pin"><div class="stick"><div class="bgl"></div>
+ <div class="inner">
+  <div>
+   <h2 class="rz">Try to fool it.</h2>
+   <p class="lead">Change a bill number or shuffle supplier mistakes. Compare to see what needs checking.</p>
+   <svg id="rg" viewBox="-112 -112 224 224"></svg>
+   <div id="dl">Start the comparison to reveal the result mix.</div>
+  </div>
+  <div class="card">
+   <p class="landing-inline-1">Fictional examples · no saved records or transfers</p><div class="tb" id="tabs"><button class="on" data-t="0">Reconcile</button><button data-t="1">Split payment</button><button data-t="2">IRN check</button></div>
+   <div class="p on">
+    <div class="rt h"><span>In your books</span><span>On GSTR-2B</span><span>Result</span></div><div id="rows"></div>
+    <div class="lg2"><span><b id="n0">0</b>exact</span><span><b id="n1">0</b>review suggestions</span><span><b id="n2">0</b>need checking</span></div>
+    <div class="demo-actions"><button class="cb" id="compare">Compare these records<i></i></button><button class="ul shuffle-button" id="shuf" type="button">Shuffle supplier mistakes<span class="arw"></span></button></div>
+   </div>
+   <div class="p">
+    <div class="split-fields"><div class="fld amount-field">Invoice base amount (₹)<input id="amt" type="number" min="0" step="10000" value="1000000"></div>
+    <div class="fld">GST rate<div class="row2" id="rate"><button class="chip" data-r=".05">5%</button><button class="chip" data-r=".12">12%</button><button class="chip on" data-r=".18">18%</button><button class="chip" data-r=".28">28%</button></div></div>
+    <div class="fld">GST evidence received?<div class="row2" id="vf"><button class="chip" data-v="yes">Yes</button><button class="chip on" data-v="no">No</button><button class="chip" data-v="unk">Not sure</button></div></div>
+    <div class="fld days-field"><label for="days">Days since invoice: <span id="dv">20</span></label><input id="days" type="range" min="0" max="60" value="20" class="landing-inline-2"></div></div>
+    <div class="bar" id="payment-bar" role="img"><div id="b1"></div><div id="b2"></div></div><div class="payment-key"><span id="base-label"></span><span id="tax-label"></span></div><div id="opts"></div>
+   </div>
+   <div class="p">
+    <p class="landing-inline-3">This checks only the written 64-hex reference format. It cannot verify authenticity or determine whether e-invoicing applies. Rule 48(4): verify with CA.</p>
+    <input id="irn" placeholder="Paste an IRN" maxlength="80"><div class="bar landing-inline-4"><div id="ib" class="landing-inline-5"></div><div class="landing-inline-6"></div></div><div class="out" id="io"></div><button class="cb landing-inline-7" id="irs">Fill a format sample<i></i></button>
+   </div>
+  </div>
+ </div></div></section>
+
+<section id="how" class="pin"><div class="stick"><div class="bgl"></div>
+ <div class="inner">
+  <div><h2 class="rz">Three steps.</h2><p>Keep the bill, its evidence and the next decision together.</p></div>
+  <div class="tlv" id="tlv"><div class="rail"><i id="rl"></i></div>
+   <div class="st" data-n="1"><h3 class="rz">Bring the bill</h3><p>Upload a PDF or photo. Confirm the AI-extracted details, or import a supported purchase register.</p></div>
+   <div class="st" data-n="2"><h3 class="rz">Compare the evidence</h3><p>Add the order, delivery and GST statement. Check differences, supplier risk and tax needing review.</p></div>
+   <div class="st" data-n="3"><h3 class="rz">Choose the next step</h3><p>Review the payment recommendation and track supplier corrections. New evidence triggers a recheck.</p></div>
+  </div>
+ </div></div></section>
+
+<section id="price" class="pin"><div class="stick"><div class="bgl"></div>
+ <div class="inner">
+  <h2 class="rz">Plans for your team.</h2>
+  <p class="pricing-note">Proposed plans. Billing is not enabled. AI and WhatsApp usage may cost extra.</p><div class="tiers">
+   <div class="arch rv"><svg class="m" id="m1"></svg><h3 class="rz">Community</h3><div class="pr">Free</div>proposed local starter<ul><li>Invoice capture and matching</li><li>Supported CSV/XLSX imports</li><li>Saved invoice history</li></ul></div>
+   <div class="arch rv"><svg class="m" id="m2"></svg><h3 class="rz">Shield</h3><div class="pr">₹299</div>proposed price / month<ul><li>Payment review and CSV drafts</li><li>Cases for credit and deadlines</li><li>Simulated bank payment gate</li></ul></div>
+   <div class="arch rv"><svg class="m" id="m3"></svg><h3 class="rz">Team</h3><div class="pr">₹999</div>proposed price / month<ul><li>Supplier correction tracking</li><li>Private evidence and reports</li><li>Notice drafts for review</li></ul></div>
+  </div>
+ </div></div></section>
+
+<section id="cta" class="pin"><div class="stick"><div class="bgl"></div><svg id="cm"></svg>
+ <div class="inner">
+  <h2 class="rz">Check the bill.<br>Choose what to pay.</h2>
+  <a class="orb" href="/" aria-label="Open your invoice desk"><svg class="t" viewBox="0 0 200 200"><defs><path id="oc" d="M100 100m-76 0a76 76 0 1 1 152 0a76 76 0 1 1-152 0"/></defs><text><textPath href="#oc">Open invoice desk · Start with your bill · </textPath></text></svg><i></i></a>
+  <p class="trk">Upload a bill, connect the evidence, review a payment decision and follow the supplier’s correction.</p>
+ </div></div></section>
+<footer><div class="band"></div><p>Hackathon prototype. Review decisions stay with your team. Bank payments and sample GST fetching are simulated; official filing and live government verification are not connected.</p></footer>
+
+
+
+<script type="module" src="/src/landing.js"></script>
+</body>
+</html>

@@ -17,6 +17,8 @@ from app.api.access import authenticated, envelope
 from app.contracts.imports import (
     ImportConfirm,
     ImportListResponse,
+    ImportRemove,
+    ImportRemoveResponse,
     ImportResponse,
     JobResponse,
     MappingPatch,
@@ -183,7 +185,13 @@ async def upload(request: Request, workspace_id: UUID):
             raise APIError(
                 422, "UPLOAD_FIELDS_INVALID", "Check import context, adapter and mapping fields."
             ) from None
-        extensions = {"csv-v1": ".csv", "xlsx-v1": ".xlsx", "canonical-demo-v1": ".json"}
+        extensions = {
+            "csv-v1": ".csv",
+            "xlsx-v1": ".xlsx",
+            "canonical-demo-v1": ".json",
+            "gst-2b-json-v1": ".json",
+            "five-column-v1": ".csv",
+        }
         if not filename.lower().endswith(extensions[metadata["adapter_version"]]):
             raise APIError(
                 415, "FILE_TYPE_INVALID", "File extension must match the selected adapter."
@@ -292,6 +300,20 @@ def confirm(request: Request, workspace_id: UUID, import_id: UUID, payload: Impo
         identity, str(workspace_id), result["registration_id"], result["period"]
     )
     return envelope(request, result)
+
+
+@router.post("/imports/{import_id}/remove", response_model=ImportRemoveResponse)
+def remove(request: Request, workspace_id: UUID, import_id: UUID, payload: ImportRemove):
+    return envelope(
+        request,
+        imports(request).remove_unused(
+            authenticated(request, mutation=True),
+            str(workspace_id),
+            str(import_id),
+            payload.model_dump(mode="json"),
+            request_key(request),
+        ),
+    )
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)

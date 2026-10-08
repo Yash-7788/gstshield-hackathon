@@ -10,6 +10,9 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve, dirname, basename } from "node:path";
+const webPort = Number(process.env.GSTSHIELD_TEST_WEB_PORT || 3000);
+if (!Number.isInteger(webPort) || webPort < 1024 || webPort > 65535)
+  throw new Error("Invalid isolated browser port");
 const backend = resolve("../backend");
 const python = join(
   backend,
@@ -29,7 +32,7 @@ import uvicorn
 for key in list(os.environ):
  if key.lower() in Settings.model_fields: del os.environ[key]
 config.BACKEND_DIR=Path(os.environ["GSTSHIELD_TEST_ROOT"])
-settings=Settings(_env_file=None,app_env="test",port=8027,public_api_url="http://127.0.0.1:8027",public_web_url="http://127.0.0.1:3000",read_requests_per_minute=5000,mutation_requests_per_minute=1000,import_requests_per_minute=100,max_imports_per_workspace=40)
+settings=Settings(_env_file=None,app_env="test",port=8027,public_api_url="http://127.0.0.1:8027",public_web_url="http://127.0.0.1:${webPort}",cors_origins=["http://127.0.0.1:${webPort}"],read_requests_per_minute=5000,mutation_requests_per_minute=1000,import_requests_per_minute=100,max_imports_per_workspace=40)
 store=LocalStore(settings)
 store.acquire()
 store.initialize()
@@ -44,6 +47,12 @@ if not populated:
  access.add_registration(second,"27ABCDE1234F1Z5","Other company")
  access.grant("alice",second,"VIEWER")
 store.close()
+if os.environ.get("GSTSHIELD_TEST_CONTROLLED_OCR") == "1":
+ assert settings.app_env == "test"
+ from app.adapters import gemini
+ from tests.integration.test_passports import FIELDS
+ gemini.extract=lambda *_: FIELDS | {"uncertainties":[],"evidence_quotes":{}}
+ gemini.extract_commercial=lambda _settings,_content,_mime,kind: {"document_kind":kind,"reference":kind+"-SYNTHETIC","observed_on":"2024-05-10","taxable_value":"100000.00" if kind=="PO" else None,"quantity":"10","items":[FIELDS["items"][0] | ({"taxable_value":None} if kind=="RECEIPT" else {})],"uncertainties":[]}
 uvicorn.run(create_app(settings),host="127.0.0.1",port=8027,log_level="warning")`;
 let website;
 let restartTimer;
@@ -158,6 +167,8 @@ website = spawn(
   [
     "node_modules/vite/bin/vite.js",
     ...(process.env.GSTSHIELD_TEST_PREVIEW === "1" ? ["preview"] : []),
+    "--port",
+    String(webPort),
   ],
   {
     env: {

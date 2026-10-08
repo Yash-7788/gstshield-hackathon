@@ -1,3 +1,4 @@
+import { openSection } from "./navigation.mjs";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 const api = "http://127.0.0.1:8027";
@@ -99,7 +100,7 @@ for (const width of [1280, 390]) {
       expected_version: invoice.version,
       status: "MATCHED",
     });
-    await page.getByRole("link", { name: "Invoice desk", exact: true }).click();
+    await openSection(page, "Invoice desk");
     await page
       .getByRole("button", { name: new RegExp(`BROWSER-${width}`) })
       .click();

@@ -1,3 +1,4 @@
+import { openSection } from "./navigation.mjs";
 // Controlled channel replies test browser behavior; the first check uses the real local API.
 import { test, expect } from "@playwright/test";
 const exact = (name) => ({ name, exact: true });
@@ -98,7 +99,7 @@ async function fixture(page, state) {
   await page
     .getByLabel("Accounting month", exact("Accounting month"))
     .fill("2024-05");
-  await page.getByRole("link", exact("WhatsApp")).click();
+  await openSection(page, "WhatsApp");
 }
 test("real default channel stays disabled while website sources remain usable", async ({
   page,
@@ -112,7 +113,7 @@ test("real default channel stays disabled while website sources remain usable", 
   await page.getByRole("combobox", exact("Workspace")).selectOption({
     label: "Synthetic demonstration · owner",
   });
-  await page.getByRole("link", exact("WhatsApp")).click();
+  await openSection(page, "WhatsApp");
   await expect(
     page.getByText("WhatsApp is disabled.", { exact: false }),
   ).toBeVisible();
@@ -134,7 +135,7 @@ test("real default channel stays disabled while website sources remain usable", 
     path: "test-results/whatsapp-mobile.png",
     fullPage: true,
   });
-  await page.getByRole("link", exact("Sources")).click();
+  await openSection(page, "Sources");
   await expect(page.getByRole("button", exact("Upload source"))).toBeVisible();
 });
 test("one-use code expires and permission loss clears it without browser storage", async ({

@@ -43,6 +43,10 @@ class WhatsAppFollowups:
 
     def code(self, identity, workspace, payload):
         channel = self.channel
+        with channel.store.transaction(write=False) as connection:
+            channel.access.require_membership(
+                connection, identity, workspace, roles={"OWNER", "REVIEWER"}
+            )
         channel.enabled()
         code = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567") for _ in range(12))
         now = int(channel.clock())
@@ -184,6 +188,10 @@ class WhatsAppFollowups:
 
     def send(self, identity, workspace, payload):
         channel = self.channel
+        with channel.store.transaction(write=False) as connection:
+            channel.access.require_membership(
+                connection, identity, workspace, roles={"OWNER", "REVIEWER"}
+            )
         channel.enabled()
         if not channel.settings.whatsapp_send_budget:
             raise APIError(

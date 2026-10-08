@@ -73,7 +73,7 @@ Implemented validation includes:
 
 Startup configuration failures print a sanitized message and exit with code 2. Never print the settings object/model_dump, raw validation errors or environment values.
 
-Storage, session, private request-rate and small streamed-body limits are enforced in Phase 2. Phase 3 enforces upload/parser limits; linking/download/provider limits remain reservations until their features are implemented. WHATSAPP_ENABLED must remain false: even complete provider configuration cannot activate an unfinished integration.
+Storage, session, private request-rate and small streamed-body limits are enforced in Phase 2. Phase 3 enforces upload/parser limits; linking/download/provider limits remain reservations until their features are implemented. WhatsApp defaults to disabled and a zero send budget. Enable it only with the required provider configuration, consent and verified callback setup; local integration does not establish physical-phone acceptance.
 
 ## Current HTTP safeguards
 
@@ -182,7 +182,7 @@ Stop the backend before operator commands. There are no seeded credentials or pu
 ..\.tooling\Scripts\uv.exe run --frozen python -m app.manage user-create --username demo-owner --workspace 'Demo Workspace'
 ```
 
-Choose/confirm a 12–128 character password through the private terminal prompt. The command prints user/workspace IDs. Do not put passwords in terminal command arguments, screenshots or Git. Add a synthetic registration using the printed workspace UUID:
+Choose/confirm a nonblank password of up to 128 characters (512 UTF-8 bytes maximum) through the private terminal prompt. The command prints user/workspace IDs. Do not put passwords in terminal command arguments, screenshots or Git. Add a synthetic registration using the printed workspace UUID:
 
 ```powershell
 ..\.tooling\Scripts\uv.exe run --frozen python -m app.manage registration-create --workspace-id '<workspace UUID>' --gstin '27ABCDE1234F1Z5' --name 'Synthetic Demo Registration'
@@ -394,3 +394,12 @@ storage remain. Frontend smoothness, conditional WhatsApp and combined rehearsal
 Local WhatsApp commands, signed callbacks, durable inbox/outbox, supplier consent and website controls are implemented. **This is a work-in-progress checkpoint, not completed Phase 13 acceptance.** Meta setup/HTTPS callback/physical-phone proof remain pending. Default WHATSAPP_ENABLED=false and send budget zero; no real messages or tunnel were created. Existing storage now needs an explicit offline, validated/backed-up `python -m app.manage storage-upgrade` from backend/ to reach schema 6. Never delete the old database; the presenter store was not changed here.
 
 The initial channel/provider set passed 29 tests; the final added ambiguity check passed separately. Browser run: 24 passed, one blank-page failure before login; follow-up startup also failed. Full regression was stopped at the user's request and must not be claimed as passed. See [the build plan](../md/05_BUILD_AND_VERIFICATION_PLAN.md) for exact scope, remaining checks and physical acceptance (use ../md/ from component folders). Git checkpoint skips CI to respect the request not to run regression now.
+
+
+## Product routes and schema 8
+
+The additive product storage preserves older accounts, invoices and cases. New JSON routes are under `/api/v1/workspaces/{workspace_id}/product`: portal, business, owner-summary, team/members, contributions, assistants/{role}, invoices/{id}/review-facts, traps, tax-suggestions, workflows, node assignment/transition and notifications. Authenticated scheme and competitor directories use the same workspace scope.
+
+All private reads recheck membership. Writes use the existing session/origin/CSRF boundary, idempotency receipts and versions. Invoice decisions/reviews carry an evidence fingerprint. Current evidence, checked predecessors and exit checks are required before process completion. Individual employee salaries are owner-only; shared finance context contains aggregate payroll with a completeness flag.
+
+No external database, Redis or cloud deployment was added. The loopback launcher, retained SQLite history, single local job executor and existing matching/payment authorities remain. AI extraction/explanation is optional; tests use synthetic providers and do not consume production credentials.

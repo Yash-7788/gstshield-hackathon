@@ -14,6 +14,7 @@ class LoginRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     username: str
     password: SecretStr
+    portal: Literal["owner", "team"] | None = None
 
     @field_validator("username")
     @classmethod
@@ -32,6 +33,7 @@ class SessionData(BaseModel):
     username: str
     expires_at: datetime
     csrf_token: str
+    portal: Literal["owner", "team"] | None = None
 
 
 class SessionResponse(BaseModel):

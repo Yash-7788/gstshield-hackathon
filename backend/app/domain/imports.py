@@ -132,11 +132,18 @@ def canonical_row(raw: dict, mapping: dict, recipient: str, kind: str, row_numbe
             reported = money_paise(values["total_tax"], "total_tax")
             if amounts["total_tax"] is not None and reported != amounts["total_tax"]:
                 invalid("total_tax", "TAX_TOTAL_INVALID")
+            elif amounts["total_tax"] is None:
+                amounts["total_tax"] = reported
         except ValueError:
             invalid("total_tax", "INVALID_MONEY")
     canonical["total_tax"] = money_string(amounts["total_tax"])
-    canonical["reason_codes"] = ["COMPONENTS_UNKNOWN"] if amounts["total_tax"] is None else []
-    if all(amounts.get(field) is not None for field in MONEY_FIELDS):
+    canonical["reason_codes"] = (
+        ["COMPONENTS_UNKNOWN"] if any(amounts.get(f) is None for f in COMPONENTS) else []
+    )
+    if all(
+        amounts.get(field) is not None
+        for field in ("taxable_value", "total_tax", "other_charges", "round_off", "gross_total")
+    ):
         expected = (
             amounts["taxable_value"]
             + amounts["total_tax"]

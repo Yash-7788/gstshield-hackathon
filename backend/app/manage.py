@@ -7,6 +7,7 @@ import warnings
 
 from app.config import ConfigurationError, load_settings
 from app.errors import APIError, StorageError
+from app.security.credential_receipts import upgrade_receipts
 from app.services.access import AccessService
 from app.storage.local import LocalStore
 
@@ -16,7 +17,7 @@ def new_password() -> str:
         raise ValueError("Use an interactive terminal for private password prompts.")
     with warnings.catch_warnings():
         warnings.simplefilter("error", getpass.GetPassWarning)
-        first = getpass.getpass("Password (12-128 characters): ")
+        first = getpass.getpass("Password (nonempty, up to 128 characters): ")
         second = getpass.getpass("Confirm password: ")
     if first != second:
         raise ValueError("Password confirmation does not match.")
@@ -42,6 +43,8 @@ def main() -> int:
     registration.add_argument("--workspace-id", required=True)
     registration.add_argument("--gstin", required=True)
     registration.add_argument("--name", required=True)
+    receipts = commands.add_parser("secure-credential-receipts")
+    receipts.add_argument("--workspace-id", required=True)
     commands.add_parser("backup")
     commands.add_parser("storage-upgrade")
     restore = commands.add_parser("restore")
@@ -69,7 +72,12 @@ def main() -> int:
             return 0
         store.initialize()
         access = AccessService(store)
-        if arguments.command == "user-create":
+        if arguments.command == "secure-credential-receipts":
+            from uuid import UUID
+
+            workspace = str(UUID(arguments.workspace_id))
+            print(f"Credential retry records protected: {upgrade_receipts(store, workspace)}")
+        elif arguments.command == "user-create":
             user, workspace = access.provision(
                 arguments.username, new_password(), arguments.workspace
             )

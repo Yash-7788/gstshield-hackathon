@@ -116,11 +116,11 @@ class LocalHTTPBoundary:
             await response(scope, receive, send_with_headers)
             return
         private_upload = scope["method"] == "POST" and re.fullmatch(
-            r"/api/v1/workspaces/[0-9a-fA-F-]{36}/(?:imports|passports/documents)",
+            r"/api/v1/workspaces/[0-9a-fA-F-]{36}/(?:imports|passports/documents|passports/[0-9a-fA-F-]{36}/evidence-documents)",
             scope.get("path", ""),
         )
         # Upload route authenticates before receiving its separately bounded body.
-        if scope["method"] in {"POST", "PUT", "PATCH"} and not private_upload:
+        if scope["method"] in {"POST", "PUT", "PATCH", "DELETE"} and not private_upload:
             lengths = [value for key, value in headers if key.lower() == b"content-length"]
             invalid_length = len(lengths) > 1 or bool(
                 lengths and (len(lengths[0]) > 20 or not lengths[0].isdigit())

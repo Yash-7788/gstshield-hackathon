@@ -1,3 +1,4 @@
+import { openSection } from "./navigation.mjs";
 import { test, expect } from "@playwright/test";
 const session = {
   user_id: "11111111-1111-4111-8111-111111111111",
@@ -55,7 +56,7 @@ test("all six internal sections render empty states, navigation and mobile witho
   await mockScreens(page);
   await page.goto("/#%malformed");
   await expect(
-    page.getByRole("heading", { name: "Sources", exact: true }),
+    page.getByRole("heading", { name: "Invoice desk", exact: true }),
   ).toBeVisible();
   for (const section of [
     "Reconciliation",
@@ -65,7 +66,7 @@ test("all six internal sections render empty states, navigation and mobile witho
     "Reports",
     "Sources",
   ]) {
-    await page.getByRole("link", { name: section, exact: true }).click();
+    await openSection(page, section);
     await expect(
       page.getByRole("heading", { name: section, exact: true }),
     ).toBeVisible();
@@ -102,11 +103,15 @@ test("viewer has explicit read-only screens; unavailable data never shows succes
 }) => {
   await mockScreens(page, "VIEWER");
   await page.goto("/#Sources");
-  await expect(page.getByText("You have read-only access.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Financial records are read-only. Your approved shared-work actions remain available.",
+    ),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Upload source", exact: true }),
   ).toHaveCount(0);
-  await page.getByRole("link", { name: "Payment drafts", exact: true }).click();
+  await openSection(page, "Payment drafts");
   await expect(
     page.getByText("Create a payment draft", { exact: true }),
   ).toHaveCount(0);

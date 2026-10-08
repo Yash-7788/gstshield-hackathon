@@ -74,7 +74,11 @@ class ActionService(WorkflowService):
         )
         if row["case_id"]:
             case = self.scoped(connection, "cases", row["workspace_id"], row["case_id"])
-            valid = valid and case["version"] == source["case_version"]
+            valid = (
+                valid
+                and case["version"] == source["case_version"]
+                and self.cases.sources_current(connection, case)
+            )
         return valid
 
     def detail_row(self, connection, row):

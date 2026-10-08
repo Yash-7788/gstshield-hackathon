@@ -4,6 +4,7 @@ import csv
 import io
 import json
 import re
+from contextlib import suppress
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import PurePosixPath
@@ -24,7 +25,7 @@ def strict_object(pairs):
     return result
 
 
-def bounded_json(text: str, depth: int):
+def bounded_json(text: str, depth: int, *, exact_numbers=False):
     level = 0
     quoted = escaped = False
     for char in text:
@@ -47,6 +48,7 @@ def bounded_json(text: str, depth: int):
         return json.loads(
             text,
             object_pairs_hook=strict_object,
+            parse_float=Decimal if exact_numbers else float,
             parse_constant=lambda _: (_ for _ in ()).throw(ParseFailure("INVALID_JSON")),
         )
     except (ValueError, RecursionError):
@@ -244,6 +246,142 @@ def xlsx_rows(content, sheet, limits):
             workbook.close()
 
 
+def five_column_rows(content, descriptor, limits):
+    columns, raw, sheet = csv_rows(content, limits)
+    aliases = {
+        "gstin": "supplier_gstin",
+        "invoice number": "invoice_number",
+        "date": "invoice_date",
+        "taxable value": "taxable_value",
+        "tax": "total_tax",
+        "supplier_gstin": "supplier_gstin",
+        "invoice_number": "invoice_number",
+        "invoice_date": "invoice_date",
+        "taxable_value": "taxable_value",
+        "total_tax": "total_tax",
+    }
+    mapped = {aliases.get(c.strip().lower()): c for c in columns}
+    required = {"supplier_gstin", "invoice_number", "invoice_date", "taxable_value", "total_tax"}
+    if set(mapped) != required or len(columns) != 5:
+        raise ParseFailure("FIVE_COLUMN_HEADERS_INVALID")
+    rows = []
+    for i, item in enumerate(raw, 1):
+        row = {key: item[header] for key, header in mapped.items()}
+        try:
+            base = Decimal(row["taxable_value"])
+            tax = Decimal(row["total_tax"])
+            if not base.is_finite() or not tax.is_finite():
+                raise ValueError
+            gross = format(base + tax, "f")
+        except (InvalidOperation, ValueError):
+            gross = "INVALID"
+        row.update(
+            voucher_id="REGISTER-" + str(i),
+            recipient_gstin=descriptor["recipient_gstin"],
+            document_type="INVOICE",
+            other_charges="0.00",
+            round_off="0.00",
+            gross_total=gross,
+            adapter_assumptions=(
+                "User selected invoice-only register with no extra charges or "
+                "rounding. Tax components were not supplied."
+            ),
+        )
+        rows.append(row)
+    return list(rows[0]) if rows else [], rows, sheet
+
+
+def gst_2b_rows(content, descriptor, limits):
+    try:
+        data = bounded_json(
+            content.decode("utf-8-sig"), limits["max_json_depth"], exact_numbers=True
+        )
+    except UnicodeError:
+        raise ParseFailure("UTF8_REQUIRED") from None
+    if not isinstance(data, dict):
+        raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+    payload = data.get("data", data)
+    if not isinstance(payload, dict) or payload.get("gstin") != descriptor["recipient_gstin"]:
+        raise ParseFailure("CONTEXT_MISMATCH")
+    rtn = payload.get("rtnprd")
+    period = descriptor["period"]
+    if rtn not in {period, period[5:] + period[:4]}:
+        raise ParseFailure("CONTEXT_MISMATCH")
+    docs = payload.get("docdata")
+    if not isinstance(docs, dict) or not isinstance(docs.get("b2b"), list):
+        raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+    # Refuse unsupported document categories rather than silently losing them.
+    if any(value for key, value in docs.items() if key != "b2b"):
+        raise ParseFailure("GST_JSON_CATEGORY_UNSUPPORTED")
+    rows = []
+
+    def amount(value):
+        if isinstance(value, bool) or not isinstance(value, (str, int, float, Decimal)):
+            return None
+        try:
+            number = Decimal(str(value))
+            if not number.is_finite():
+                return None
+            return format(number, "f")
+        except InvalidOperation:
+            return None
+
+    for supplier in docs["b2b"]:
+        if not isinstance(supplier, dict) or not isinstance(supplier.get("inv"), list):
+            raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+        for invoice in supplier["inv"]:
+            if not isinstance(invoice, dict):
+                raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+            if len(rows) >= limits["max_import_rows"]:
+                raise ParseFailure("ROW_LIMIT")
+            values = invoice
+            items = invoice.get("itms")
+            if items is not None:
+                if (
+                    not isinstance(items, list)
+                    or not items
+                    or len(items) > limits["max_import_rows"]
+                ):
+                    raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+                details = [x.get("itm_det", x) if isinstance(x, dict) else None for x in items]
+                if any(not isinstance(x, dict) for x in details):
+                    raise ParseFailure("GST_JSON_SCHEMA_INVALID")
+                values = {}
+                for field in ["txval", "iamt", "camt", "samt", "csamt"]:
+                    components = [amount(x.get(field)) for x in details]
+                    values[field] = (
+                        format(sum(Decimal(v) for v in components), "f")
+                        if all(v is not None for v in components)
+                        else None
+                    )
+            row = {
+                "recipient_gstin": payload["gstin"],
+                "supplier_gstin": supplier.get("ctin"),
+                "supplier_name": supplier.get("trdnm"),
+                "invoice_number": invoice.get("inum"),
+                "invoice_date": invoice.get("idt", invoice.get("dt")),
+                "document_type": "INVOICE",
+                "taxable_value": amount(values.get("txval")),
+                "gross_total": amount(invoice.get("val")),
+                "igst": amount(values.get("igst", values.get("iamt"))),
+                "cgst": amount(values.get("cgst", values.get("camt"))),
+                "sgst": amount(values.get("sgst", values.get("samt"))),
+                "cess": amount(values.get("cess", values.get("csamt"))),
+                "other_charges": "0.00",
+                "round_off": "0.00",
+                "portal_itc_availability": invoice.get("itcavl", "UNKNOWN"),
+            }
+            if isinstance(row["invoice_date"], str):
+                with suppress(ValueError):
+                    row["invoice_date"] = (
+                        datetime.strptime(row["invoice_date"], "%d-%m-%Y").date().isoformat()
+                    )
+            for value in row.values():
+                check_cell(value, limits)
+            rows.append(row)
+    return list(rows[0]) if rows else [], rows, None
+
+
 def parse_import(content: bytes, descriptor: dict, limits: dict) -> dict:
     if not content or len(content) > limits["max_upload_bytes"]:
         raise ParseFailure("UPLOAD_SIZE_INVALID")
@@ -291,6 +429,10 @@ def parse_import(content: bytes, descriptor: dict, limits: dict) -> dict:
                     columns.append(key)
         check_columns(columns, limits)
         sheet = None
+    elif descriptor["adapter_version"] == "five-column-v1":
+        columns, rows, sheet = five_column_rows(content, descriptor, limits)
+    elif descriptor["adapter_version"] == "gst-2b-json-v1":
+        columns, rows, sheet = gst_2b_rows(content, descriptor, limits)
     elif descriptor["adapter_version"] == "csv-v1":
         columns, rows, sheet = csv_rows(content, limits)
     elif descriptor["adapter_version"] == "xlsx-v1":
@@ -316,6 +458,10 @@ def parse_import(content: bytes, descriptor: dict, limits: dict) -> dict:
         for index, row in enumerate(rows, 1)
     ]
     for row in parsed:
+        if descriptor["adapter_version"] == "gst-2b-json-v1" and row["original"].get(
+            "portal_itc_availability"
+        ) not in {"Y", "Yes", "YES", "UNKNOWN"}:
+            row["errors"].append({"field": "total_tax", "reason": "PORTAL_ITC_AVAILABILITY_REVIEW"})
         for field in ("period",):
             header = mapping.get(field)
             if header and row["original"].get(header) != descriptor["period"]:

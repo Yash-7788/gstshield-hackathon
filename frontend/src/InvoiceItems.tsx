@@ -33,9 +33,11 @@ export function itemsFrom(
 export default function InvoiceItems({
   value,
   prefix = "items",
+  priced = true,
 }: {
   value?: unknown;
   prefix?: string;
+  priced?: boolean;
 }) {
   const [rows, setRows] = useState(() =>
     (Array.isArray(value) ? value : []).map((item) => ({
@@ -62,7 +64,11 @@ export default function InvoiceItems({
               <input
                 name={`${prefix}_${index}_${key}`}
                 value={row.fields[key]}
-                required={key !== "sku"}
+                required={
+                  key === "description" ||
+                  key === "quantity" ||
+                  (priced && key === "taxable_value")
+                }
                 maxLength={
                   key === "description" ? 200 : key === "sku" ? 64 : 24
                 }

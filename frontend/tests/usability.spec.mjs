@@ -1,3 +1,4 @@
+import { openSection } from "./navigation.mjs";
 // Controlled faults/bounds complement journeys.spec.mjs and the real performance workload.
 import { test, expect } from "@playwright/test";
 const api = "http://127.0.0.1:8027/api/v1";
@@ -111,7 +112,7 @@ async function fixture(page, state = {}) {
   await page.getByLabel("Accounting month", { exact: true }).fill("2024-05");
 }
 async function queue(page) {
-  await page.getByRole("link", exact("Work queue")).click();
+  await openSection(page, "Work queue");
   await expect(
     page.getByRole("button", exact("Open action")).first(),
   ).toBeVisible();
@@ -218,7 +219,7 @@ test("processing stays below the default read budget and terminal job errors ref
 }) => {
   const state = {};
   await fixture(page, state);
-  await page.getByRole("link", exact("Reconciliation")).click();
+  await openSection(page, "Reconciliation");
   await page.getByRole("button", exact("Open comparison")).click();
   await expect(
     page.getByText("Processing job: Running", { exact: false }),
@@ -439,7 +440,7 @@ test("all 60 candidates remain reachable through 20-item pages", async ({
     },
   };
   await fixture(page, state);
-  await page.getByRole("link", exact("Reconciliation")).click();
+  await openSection(page, "Reconciliation");
   await page.getByRole("button", exact("Open comparison")).click();
   await expect(page.getByText("₹-0.50", { exact: true })).toBeVisible();
   await page.getByRole("button", exact("Open result")).click();

@@ -425,6 +425,7 @@ def test_run_scope_role_csrf_context_and_review_validation(account):
         assert review(client, workspace, result, headers).status_code == 403
         assert create(client, workspace, headers, payload).status_code == 403
         client.cookies.clear()
+        access.grant("bob", foreign, "REVIEWER")
         assert client.get(f"/api/v1/workspaces/{workspace}/runs/{run['id']}").status_code == 401
         response = client.post(
             "/api/v1/auth/login",

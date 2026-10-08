@@ -14,6 +14,7 @@ from uuid import NAMESPACE_URL, uuid4, uuid5
 
 from app.adapters.whatsapp import MetaProvider, ProviderError
 from app.errors import APIError
+from app.security.roles import permitted_roles, require_role
 from app.services.access import LinkedIdentity
 
 PHONE = re.compile(r"[1-9][0-9]{6,14}")
@@ -60,13 +61,38 @@ class WhatsAppService:
         return True
 
     def link_row(self, connection, identifier):
-        return connection.execute(
+        row = connection.execute(
             "SELECT l.*,u.username FROM wa_links l JOIN users u ON u.id=l.user_id "
             "JOIN memberships m ON m.user_id=l.user_id AND m.workspace_id=l.workspace_id "
             "WHERE l.id=? AND l.active=1 AND u.active=1 AND u.version=l.user_version AND "
             "m.active=1",
             (identifier,),
         ).fetchone()
+        if row:
+            try:
+                require_role(
+                    self.access,
+                    connection,
+                    self.identity(row),
+                    row["workspace_id"],
+                    {"CA", "FOLLOWUP"},
+                )
+            except APIError:
+                return None
+        return row
+
+    def report_allowed(self, connection, link):
+        try:
+            require_role(
+                self.access,
+                connection,
+                self.identity(link),
+                link["workspace_id"],
+                permitted_roles("reports", False),
+            )
+            return True
+        except APIError:
+            return False
 
     def identity(self, row):
         return LinkedIdentity(row["user_id"], row["username"], 0, "", "", row["id"], row["version"])
@@ -80,6 +106,8 @@ class WhatsAppService:
             raise APIError(404, "NOT_FOUND", "Resource was not found.")
 
     def code(self, identity, workspace, payload):
+        with self.store.transaction(write=False) as connection:
+            self.context(connection, identity, workspace, payload["registration_id"])
         self.enabled()
         now = int(self.clock())
         code = "".join(secrets.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567") for _ in range(12))
@@ -463,6 +491,8 @@ class WhatsAppService:
         return base64.urlsafe_b64encode(raw).decode().rstrip("=")
 
     def capability(self, connection, link, artifact_id, outbox_id):
+        if not self.report_allowed(connection, link):
+            raise APIError(403, "ROLE_FORBIDDEN", "Your current role cannot receive this report.")
         token = self.token(outbox_id)
         connection.execute(
             "INSERT OR IGNORE INTO wa_capabilities VALUES (?,?,?,?,?,0,0)",
@@ -488,6 +518,7 @@ class WhatsAppService:
             if (
                 cap is None
                 or link is None
+                or not self.report_allowed(connection, link)
                 or cap["revoked"]
                 or cap["expires_at"] <= int(self.clock())
                 or cap["link_version"] != link["version"]

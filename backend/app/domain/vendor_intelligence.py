@@ -37,6 +37,7 @@ def vendor_intelligence(views):
         issues = sum(v["findings"]["summary"] != "MATCHED" for v in invoices)
         missing_irn = disputes = duplicates = 0
         exposure, previous_exposure, correction_seconds = 0, 0, []
+        unknown_tax = 0
         totals = [money_paise(v["fields"]["gross_total"], "gross_total") for v in invoices]
         rates = []
         for v in invoices:
@@ -45,8 +46,11 @@ def vendor_intelligence(views):
             tax = money_paise(fields.get("total_tax"), "igst")
             if base and tax is not None:
                 rates.append(Decimal(tax) / Decimal(base))
-            if finding["gst"] != "MATCHED" and tax is not None:
-                exposure += tax
+            if finding["gst"] != "MATCHED":
+                if tax is None:
+                    unknown_tax += 1
+                else:
+                    exposure += tax
             duplicates += bool(finding["duplicate_count"] or finding["gst"] == "DUPLICATE")
             disputes += fields.get("payment_dispute") is True
             irn = fields.get("irn", "")
@@ -183,7 +187,9 @@ def vendor_intelligence(views):
                 {"name": name, "weight": weight, "passed": passed, "observed": observed}
                 for name, weight, passed, observed in factors
             ],
-            "recorded_tax_under_review": money_string(exposure),
+            "recorded_tax_under_review": money_string(exposure) if not unknown_tax else None,
+            "known_tax_under_review": money_string(exposure),
+            "unknown_tax_invoices": unknown_tax,
             "previous_observed_tax_exposure": money_string(previous_exposure),
             "corrections_observed": len(correction_seconds),
             "median_correction_days": float(Decimal(str(median(correction_seconds))) / 86400)
@@ -192,7 +198,8 @@ def vendor_intelligence(views):
             "missing_required_irns": missing_irn,
             "recorded_disputes": disputes,
             "confidence": "LIMITED_HISTORY" if count < 5 else "OBSERVED_HISTORY",
-            "unknowns": [
+            "unknowns": (["Tax amount on invoices needing review"] if unknown_tax else [])
+            + [
                 label
                 for field, label in (
                     ("irn_required", "E-invoice applicability"),

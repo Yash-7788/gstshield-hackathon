@@ -16,12 +16,13 @@ from app.errors import StorageError
 from app.storage.action_schema import ACTION_SCHEMA
 from app.storage.import_schema import IMPORT_SCHEMA
 from app.storage.passport_schema import PASSPORT_SCHEMA
+from app.storage.product_schema import PRODUCT_SCHEMA
 from app.storage.run_schema import RUN_SCHEMA
 from app.storage.whatsapp_schema import WHATSAPP_SCHEMA
 from app.storage.workflow_schema import WORKFLOW_SCHEMA
 
 APPLICATION_ID = int.from_bytes(b"GSTS", "big")
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 BASE_SCHEMA = (
     "CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT",
     """CREATE TABLE users (
@@ -57,7 +58,8 @@ VERSION3_SCHEMA = VERSION2_SCHEMA + RUN_SCHEMA
 VERSION4_SCHEMA = VERSION3_SCHEMA + WORKFLOW_SCHEMA
 VERSION5_SCHEMA = VERSION4_SCHEMA + ACTION_SCHEMA
 VERSION6_SCHEMA = VERSION5_SCHEMA + WHATSAPP_SCHEMA
-SCHEMA = VERSION6_SCHEMA + PASSPORT_SCHEMA
+VERSION7_SCHEMA = VERSION6_SCHEMA + PASSPORT_SCHEMA
+SCHEMA = VERSION7_SCHEMA + PRODUCT_SCHEMA
 
 
 def schema_digest(connection: sqlite3.Connection) -> str:
@@ -82,6 +84,7 @@ VERSION3_DIGEST = expected_digest(VERSION3_SCHEMA)
 VERSION4_DIGEST = expected_digest(VERSION4_SCHEMA)
 VERSION5_DIGEST = expected_digest(VERSION5_SCHEMA)
 VERSION6_DIGEST = expected_digest(VERSION6_SCHEMA)
+VERSION7_DIGEST = expected_digest(VERSION7_SCHEMA)
 
 
 def check_path(path: Path, root: Path) -> None:
@@ -161,6 +164,7 @@ class LocalStore:
             connection.execute("PRAGMA trusted_schema=OFF")
             if not readonly:
                 connection.execute("PRAGMA synchronous=FULL")
+                connection.execute("PRAGMA secure_delete=ON")
                 size = connection.execute("PRAGMA page_size").fetchone()[0]
                 connection.execute(
                     f"PRAGMA max_page_count={self.settings.max_database_bytes // size}"
@@ -181,7 +185,8 @@ class LocalStore:
             4: VERSION4_DIGEST,
             5: VERSION5_DIGEST,
             6: VERSION6_DIGEST,
-            7: EXPECTED_DIGEST,
+            7: VERSION7_DIGEST,
+            8: EXPECTED_DIGEST,
         }
         if selected not in fingerprints:
             raise StorageError("Storage schema version is unsupported.")
@@ -268,7 +273,7 @@ class LocalStore:
             ) from None
 
     def upgrade(self) -> str | None:
-        """Explicit offline v1 through v6 upgrade: validate and preserve before adding tables."""
+        """Explicit offline v1 through v7 upgrade: validate and preserve before adding tables."""
         if not self.opened:
             raise StorageError("Private storage is not locked.")
         try:
@@ -296,7 +301,9 @@ class LocalStore:
             additions += WORKFLOW_SCHEMA if version < 4 else ()
             additions += ACTION_SCHEMA if version < 5 else ()
             additions += WHATSAPP_SCHEMA if version < 6 else ()
-            for statement in additions + PASSPORT_SCHEMA:
+            additions += PASSPORT_SCHEMA if version < 7 else ()
+            additions += PRODUCT_SCHEMA if version < 8 else ()
+            for statement in additions:
                 connection.execute(statement)
             connection.execute(f"PRAGMA user_version={SCHEMA_VERSION}")
             connection.execute("UPDATE metadata SET value=? WHERE key='schema'", (EXPECTED_DIGEST,))

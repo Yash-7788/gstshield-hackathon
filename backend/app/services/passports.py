@@ -17,6 +17,7 @@ from app.domain.reconciliation import amount_comparison
 from app.domain.reconciliation import key as invoice_key
 from app.domain.vendor_intelligence import vendor_intelligence
 from app.errors import APIError
+from app.security.roles import actor_role, require_role
 from app.services.imports import digest, encode
 from app.services.runs import document_id
 from app.services.workflows import WorkflowService
@@ -28,12 +29,14 @@ class PassportService(WorkflowService):
         self.ai_slot = threading.BoundedSemaphore(1)
         self.channel = None
 
-    def row(self, con, ws, pid):
+    def row(self, con, ws, pid, *, allow_removed=False):
         row = con.execute(
             "SELECT * FROM invoice_passports WHERE workspace_id=? AND id=?", (ws, pid)
         ).fetchone()
         if row is None:
             raise APIError(404, "NOT_FOUND", "Invoice was not found.")
+        if not allow_removed and json.loads(row["extraction_json"]).get("removed_at"):
+            raise APIError(410, "INVOICE_REMOVED", "This invoice was removed from active work.")
         return row
 
     def registration(self, con, ws, rid):
@@ -48,7 +51,11 @@ class PassportService(WorkflowService):
         count = con.execute(
             "SELECT count(*) FROM passport_events WHERE workspace_id=? AND passport_id=?", (ws, pid)
         ).fetchone()[0]
-        if count >= 1000 and action != "SUPPLIER_REVOKED":
+        if count >= 1000 and action not in {
+            "SUPPLIER_REVOKED",
+            "INVOICE_REMOVED",
+            "ORIGINAL_FILE_REMOVED",
+        }:
             raise APIError(409, "HISTORY_LIMIT", "Invoice history is full.")
         con.execute(
             (
@@ -223,6 +230,7 @@ class PassportService(WorkflowService):
         try:
             with self.store.transaction(write=False) as con:
                 self.authorize(con, identity, ws, mutation=True)
+                require_role(self.access, con, identity, ws, {"CA", "ACCOUNTS"})
                 row = self.row(con, ws, pid)
                 if row["confirmed"] or not row["content"]:
                     raise APIError(
@@ -249,6 +257,7 @@ class PassportService(WorkflowService):
                 )
             with self.store.transaction() as con:
                 self.authorize(con, identity, ws, mutation=True)
+                require_role(self.access, con, identity, ws, {"CA", "ACCOUNTS"})
                 self.version(self.row(con, ws, pid), version)
                 con.execute(
                     (
@@ -269,6 +278,71 @@ class PassportService(WorkflowService):
                 return self.project(con, self.row(con, ws, pid))
         finally:
             self.ai_slot.release()
+
+    def extract_commercial_document(self, identity, ws, pid, kind, content, filename, consent, key):
+
+        if kind not in {"PO", "RECEIPT"} or not consent:
+            raise APIError(
+                422, "UPLOAD_FIELDS", "Choose order or delivery and allow Google AI to read it."
+            )
+        if not content or len(content) > min(self.settings.max_upload_bytes, 4 * 1024 * 1024):
+            raise APIError(413, "FILE_SIZE", "Use a document up to 4 MB.")
+        mime = (
+            "application/pdf"
+            if content.startswith(b"%PDF-")
+            else "image/png"
+            if content.startswith(bytes.fromhex("89504e470d0a1a0a"))
+            else "image/jpeg"
+            if content.startswith(bytes.fromhex("ffd8ff"))
+            else None
+        )
+        if not mime:
+            raise APIError(415, "DOCUMENT_UNSUPPORTED", "Use PDF, PNG or JPEG.")
+        payload = {
+            "kind": kind,
+            "sha256": hashlib.sha256(content).hexdigest(),
+            "filename": filename[:200],
+        }
+        route = "commercial-extraction/" + pid
+        with self.store.transaction() as con:
+            require_role(self.access, con, identity, ws, {"CA", "WAREHOUSE"})
+            row = self.row(con, ws, pid)
+            if not row["confirmed"]:
+                raise APIError(409, "CONFIRM_FIRST", "Confirm the invoice first.")
+            version = row["version"]
+            previous = self.operation(con, identity, ws, route, key, payload)
+            if previous:
+                return previous
+        if not self.ai_slot.acquire(blocking=False):
+            raise APIError(503, "AI_BUSY", "Another document is being read. Try shortly.")
+        try:
+            extracted = gemini.extract_commercial(self.settings, content, mime, kind)
+        finally:
+            self.ai_slot.release()
+        if extracted["document_kind"] != kind:
+            raise APIError(
+                422,
+                "DOCUMENT_KIND_MISMATCH",
+                "This file is not the selected order or delivery record. Choose the "
+                "correct document.",
+            )
+        self.store.capacity(131072)
+        with self.store.transaction() as con:
+            require_role(self.access, con, identity, ws, {"CA", "WAREHOUSE"})
+            self.version(self.row(con, ws, pid), version)
+            previous = self.operation(con, identity, ws, route, key, payload)
+            if previous:
+                return previous
+            proposal = {
+                "proposal_id": self.identifier(),
+                **payload,
+                "fields": extracted,
+                "state": "AWAITING_REVIEW",
+                "raw_document_retained": False,
+            }
+            self.event(con, identity, ws, pid, "COMMERCIAL_DOCUMENT_PROPOSED", proposal)
+            self.record(con, identity, ws, route, key, payload, proposal)
+            return proposal
 
     def ensure_comparison(self, identity, ws, pid):
         """Queue an exact-source comparison after a confirmed write; never approve results."""
@@ -420,6 +494,7 @@ class PassportService(WorkflowService):
     def confirm(self, identity, ws, pid, payload, request_id):
         with self.store.transaction() as con:
             self.authorize(con, identity, ws, mutation=True)
+            require_role(self.access, con, identity, ws, {"CA", "ACCOUNTS"})
             previous = self.operation(
                 con, identity, ws, "passport-confirm/" + pid, request_id, payload
             )
@@ -542,6 +617,14 @@ class PassportService(WorkflowService):
     def evidence(self, identity, ws, pid, payload, request_id, kind=None):
         with self.store.transaction() as con:
             self.authorize(con, identity, ws, mutation=True)
+            allowed = (
+                {"CA", "CFO"}
+                if kind == "CLOCKS"
+                else {"CA"}
+                if kind == "PORTAL"
+                else {"CA", "WAREHOUSE"}
+            )
+            require_role(self.access, con, identity, ws, allowed)
             route = "passport-evidence/" + pid + "/" + str(kind or payload["kind"])
             previous = self.operation(con, identity, ws, route, request_id, payload)
             row = self.row(con, ws, pid)
@@ -550,7 +633,27 @@ class PassportService(WorkflowService):
             self.version(row, payload["expected_version"])
             if not row["confirmed"]:
                 raise APIError(409, "CONFIRM_FIRST", "Confirm invoice details first.")
+            request_payload = payload
             kind = kind or payload["kind"]
+            if payload.get("document_proposal_id"):
+                source = con.execute(
+                    "SELECT payload_json FROM passport_events WHERE workspace_id=? "
+                    "AND passport_id=? AND action='COMMERCIAL_DOCUMENT_PROPOSED' AND "
+                    "json_extract(payload_json,'$.proposal_id')=?",
+                    (ws, pid, payload["document_proposal_id"]),
+                ).fetchone()
+                proposal = json.loads(source[0]) if source else None
+                if proposal is None or proposal["kind"] != kind:
+                    raise APIError(
+                        422,
+                        "DOCUMENT_PROPOSAL_INVALID",
+                        "Use the matching document proposal for this invoice.",
+                    )
+                payload = payload | {
+                    "document_sha256": proposal["sha256"],
+                    "source_filename": proposal["filename"],
+                    "provenance": "OCR_REVIEWED",
+                }
             if kind == "PORTAL":
                 source = self.imports.scoped(con, identity, ws, payload["import_id"], mutation=True)
                 if (
@@ -562,9 +665,12 @@ class PassportService(WorkflowService):
                     raise APIError(
                         409, "SOURCE_NOT_READY", "Choose a confirmed GST source for this period."
                     )
-            if kind == "CLOCKS" and money_paise(
-                payload["amount_paid"], "amount_paid"
-            ) > money_paise(json.loads(row["fields_json"])["gross_total"], "gross_total"):
+            if (
+                kind == "CLOCKS"
+                and payload.get("amount_paid") is not None
+                and money_paise(payload["amount_paid"], "amount_paid")
+                > money_paise(json.loads(row["fields_json"])["gross_total"], "gross_total")
+            ):
                 raise APIError(422, "PAID_TOO_HIGH", "Paid amount exceeds the invoice total.")
             con.execute(
                 "INSERT INTO passport_evidence VALUES(?,?,?,?,?,?,?)",
@@ -583,12 +689,64 @@ class PassportService(WorkflowService):
                 (ws, pid),
             )
             self.event(con, identity, ws, pid, kind + "_EVIDENCE_RECORDED", payload)
-            self.record(con, identity, ws, route, request_id, payload, {"id": pid})
+            self.record(con, identity, ws, route, request_id, request_payload, {"id": pid})
             return self.project(con, self.row(con, ws, pid))
+
+    def purchase_basis(self, con, row, fields):
+        if not row["confirmed"]:
+            return None, True
+        source = con.execute(
+            "SELECT * FROM imports WHERE workspace_id=? AND id=?",
+            (row["workspace_id"], row["purchase_import_id"]),
+        ).fetchone()
+        if source is None:
+            return {"id": row["purchase_import_id"], "state": "MISSING"}, False
+        binding = con.execute(
+            "SELECT payload_json FROM passport_events WHERE workspace_id=? AND passport_id=? "
+            "AND action='PURCHASE_LINKED' ORDER BY sequence DESC LIMIT 1",
+            (row["workspace_id"], row["id"]),
+        ).fetchone()
+        number = json.loads(binding[0])["row_number"] if binding else 1
+        accepted = con.execute(
+            "SELECT canonical_json,accepted FROM import_rows WHERE workspace_id=? AND "
+            "import_id=? AND row_number=?",
+            (row["workspace_id"], source["id"], number),
+        ).fetchone()
+        canonical = json.loads(accepted["canonical_json"]) if accepted else {}
+        # Compare the same canonical purchase fields used by confirmation/import intake.
+        parsed = canonical_row(
+            fields,
+            {f: f for f in FIELDS if f in fields},
+            self.registration(con, row["workspace_id"], row["registration_id"])["gstin"],
+            "PURCHASE",
+            number,
+        )
+        compared = dict(parsed["canonical"])
+        original = dict(canonical)
+        for optional in ("supplier_name", "irn"):
+            compared.setdefault(optional, "")
+            original.setdefault(optional, "")
+        agrees = parsed["accepted"] and compared == original
+        basis = {
+            name: source[name]
+            for name in ("id", "version", "state", "file_sha256", "adapter_version", "provenance")
+        }
+        basis.update(row_number=number, row_signature=digest(canonical), fields_agree=agrees)
+        current = bool(
+            source["state"] == "READY"
+            and source["kind"] == "PURCHASE"
+            and source["registration_id"] == row["registration_id"]
+            and source["period"] == row["period"]
+            and accepted
+            and accepted["accepted"]
+            and agrees
+        )
+        return basis, current
 
     def project(self, con, row):
         ws, pid = row["workspace_id"], row["id"]
         fields = json.loads(row["fields_json"])
+        purchase_basis, purchase_current = self.purchase_basis(con, row, fields)
         evidence = {}
         for item in con.execute(
             "SELECT * FROM passport_evidence WHERE workspace_id=? AND passport_id=? ORDER BY rowid",
@@ -624,6 +782,15 @@ class PassportService(WorkflowService):
                 findings[label] = result["status"]
                 findings[label + "_items"] = result
         selected = evidence.get("PORTAL", {}).get("import_id")
+        default = con.execute(
+            "SELECT payload_json FROM product_events WHERE workspace_id=? AND "
+            "kind='GST_STATEMENT_SELECTED' AND "
+            "json_extract(payload_json,'$.registration_id')=? AND "
+            "json_extract(payload_json,'$.period')=? ORDER BY rowid DESC LIMIT 1",
+            (ws, row["registration_id"], row["period"]),
+        ).fetchone()
+        if default:
+            selected = json.loads(default[0])["import_id"]
         portal = None
         if selected:
             portal = con.execute(
@@ -725,6 +892,10 @@ class PassportService(WorkflowService):
             else "MATCHED"
         )
         risk_signals = []
+        if row["confirmed"] and not purchase_current:
+            risk_signals.append(
+                "The linked purchase source changed. Review the corrected invoice source."
+            )
         if row["confirmed"]:
             irn = fields.get("irn", "")
             if fields.get("irn_required") is True and not irn:
@@ -752,6 +923,8 @@ class PassportService(WorkflowService):
             summary = "REVIEW"
         findings.update(
             risk_signals=risk_signals,
+            purchase_source=purchase_basis,
+            purchase_source_current=purchase_current,
             summary=summary,
             duplicate_count=duplicates,
             gst_source=portal_signature,
@@ -787,8 +960,13 @@ class PassportService(WorkflowService):
             "facts": facts,
         }
         gross = money_paise(fields["gross_total"], "gross_total") if row["confirmed"] else None
-        paid = money_paise(facts.get("amount_paid", "0.00"), "amount_paid")
-        remaining = max(0, gross - paid) if gross is not None and "CLOCKS" in evidence else None
+        paid = (
+            money_paise(facts["amount_paid"], "amount_paid")
+            if facts.get("amount_paid") is not None
+            else None
+        )
+        payment_known = paid is not None and bool(facts.get("payment_observed_on"))
+        remaining = max(0, gross - paid) if gross is not None and payment_known else None
         tax = money_paise(fields.get("total_tax"), "igst")
         gate = {
             "recommendation": "ESCALATE"
@@ -804,7 +982,7 @@ class PassportService(WorkflowService):
             else "REVIEW",
             "remaining_amount": money_string(remaining),
             "suggested_part_payment": money_string(
-                min(remaining, money_paise(fields["taxable_value"], "taxable_value"))
+                min(remaining, max(0, money_paise(fields["taxable_value"], "taxable_value") - paid))
             )
             if remaining is not None
             else None,
@@ -819,16 +997,21 @@ class PassportService(WorkflowService):
             if overdue
             else "Review missing or conflicting records.",
             "execution": "NO_BANK_TRANSFER",
-            "payment_facts_confirmed": "CLOCKS" in evidence,
+            "payment_facts_confirmed": payment_known,
         }
         signature = digest(
             {
                 "fields": fields,
                 "evidence": evidence,
                 "gst_source": portal_signature,
+                "purchase_source": purchase_basis,
+                "removed_at": json.loads(row["extraction_json"]).get("removed_at"),
+                "original_removed_at": json.loads(row["extraction_json"]).get(
+                    "original_removed_at"
+                ),
                 "findings": findings,
                 "payment_due": overdue,
-                "policy": 2,
+                "policy": 3,
             }
         )
         saved = con.execute(
@@ -877,6 +1060,16 @@ class PassportService(WorkflowService):
             entry["amount_paise"] for entry in transfers if entry["status"] == "RELEASED"
         )
         demo_remaining = max(0, remaining - released) if remaining is not None else None
+        base_remaining = (
+            max(0, money_paise(fields["taxable_value"], "taxable_value") - paid - released)
+            if payment_known and row["confirmed"]
+            else None
+        )
+        gate["suggested_part_payment"] = (
+            money_string(min(demo_remaining, base_remaining))
+            if demo_remaining is not None and base_remaining is not None
+            else None
+        )
         allowed = 0
         if approval and approval["state"] == "APPROVED" and demo_remaining is not None:
             approved_used = sum(
@@ -895,9 +1088,6 @@ class PassportService(WorkflowService):
                 and summary != "DUPLICATE"
                 and not risk_signals
             ):
-                base_remaining = max(
-                    0, money_paise(fields["taxable_value"], "taxable_value") - paid - released
-                )
                 allowed = min(
                     demo_remaining,
                     base_remaining,
@@ -911,7 +1101,7 @@ class PassportService(WorkflowService):
             "tax_protected": money_string(min(tax, demo_remaining))
             if tax is not None and demo_remaining is not None and findings["gst"] != "MATCHED"
             else "0.00"
-            if demo_remaining is not None
+            if demo_remaining is not None and findings["gst"] == "MATCHED"
             else None,
             "last_attempt": transfers[-1] if transfers else None,
             "attempts": transfers[-50:],
@@ -925,6 +1115,8 @@ class PassportService(WorkflowService):
             "period": row["period"],
             "version": row["version"],
             "confirmed": bool(row["confirmed"]),
+            "removed": bool(json.loads(row["extraction_json"]).get("removed_at")),
+            "original_available": row["content"] is not None,
             "filename": row["filename"],
             "fields": fields,
             "extraction": json.loads(row["extraction_json"]),
@@ -954,11 +1146,50 @@ class PassportService(WorkflowService):
     def detail(self, identity, ws, pid):
         with self.store.transaction(write=False) as con:
             self.authorize(con, identity, ws)
-            return self.project(con, self.row(con, ws, pid))
+            return self.project(con, self.row(con, ws, pid, allow_removed=True))
+
+    def remove(self, identity, ws, pid, payload, request_id):
+        with self.store.transaction() as con:
+            self.authorize(con, identity, ws, mutation=True)
+            require_role(self.access, con, identity, ws, {"CA", "ACCOUNTS"})
+            route = "passport-remove/" + pid
+            previous = self.operation(con, identity, ws, route, request_id, payload)
+            row = self.row(con, ws, pid, allow_removed=True)
+            if previous:
+                return self.project(con, row)
+            self.version(row, payload["expected_version"])
+            extraction = json.loads(row["extraction_json"])
+            if extraction.get("removed_at"):
+                raise APIError(410, "INVOICE_REMOVED", "Invoice is already removed.")
+            now = int(time.time())
+            extraction["original_removed_at"] = now
+            archive = payload["target"] == "INVOICE"
+            if archive:
+                extraction["removed_at"] = now
+            con.execute(
+                "UPDATE invoice_passports SET content=NULL,extraction_json=?,confirmed=?,"
+                "version=version+1 WHERE workspace_id=? AND id=?",
+                (encode(extraction), 0 if archive else row["confirmed"], ws, pid),
+            )
+            self.event(
+                con,
+                identity,
+                ws,
+                pid,
+                "INVOICE_REMOVED" if archive else "ORIGINAL_FILE_REMOVED",
+                {"original_sha256": row["sha256"], "financial_history_retained": True},
+            )
+            if archive:
+                self.event(
+                    con, identity, ws, pid, "SUPPLIER_REVOKED", {"reason": "Invoice removed"}
+                )
+            self.record(con, identity, ws, route, request_id, payload, {"id": pid})
+            return self.project(con, self.row(con, ws, pid, allow_removed=True))
 
     def approve(self, identity, ws, pid, payload, request_id):
         with self.store.transaction() as con:
             self.authorize(con, identity, ws, mutation=True)
+            require_role(self.access, con, identity, ws, {"CA", "CFO"})
             route = "passport-approve/" + pid
             previous = self.operation(con, identity, ws, route, request_id, payload)
             row = self.row(con, ws, pid)
@@ -1004,11 +1235,15 @@ class PassportService(WorkflowService):
                 and view["findings"]["receipt"] == "MATCHED"
                 and not view["findings"]["duplicate_count"]
                 and view["findings"]["gst"] != "DUPLICATE"
+                and not view["findings"]["risk_signals"]
+                and view["gate"]["suggested_part_payment"] is not None
+                and amount <= money_paise(view["gate"]["suggested_part_payment"], "amount")
             ):
                 raise APIError(
                     409,
                     "PART_PAYMENT_REVIEW",
-                    "Part payment needs aligned order and receipt, with no duplicate.",
+                    "Part payment needs aligned order and receipt, no risk flags, "
+                    "and an amount within unpaid goods value.",
                 )
             con.execute(
                 "INSERT INTO passport_decisions VALUES(?,?,?,?,?,?,?,?,?,?)",
@@ -1043,6 +1278,7 @@ class PassportService(WorkflowService):
     def resolution(self, identity, ws, pid, payload, request_id):
         with self.store.transaction() as con:
             self.authorize(con, identity, ws, mutation=True)
+            require_role(self.access, con, identity, ws, {"CA", "FOLLOWUP"})
             route = "passport-resolution/" + pid
             previous = self.operation(con, identity, ws, route, request_id, payload)
             row = self.row(con, ws, pid)
@@ -1125,7 +1361,9 @@ class PassportService(WorkflowService):
             rows = con.execute(
                 (
                     "SELECT * FROM invoice_passports WHERE workspace_id=? AND "
-                    "registration_id=? AND period=? ORDER BY created_at DESC,id LIMIT "
+                    "registration_id=? AND period=? AND "
+                    "json_extract(extraction_json,'$.removed_at') IS NULL "
+                    "ORDER BY created_at DESC,id LIMIT "
                     "100"
                 ),
                 (ws, rid, period),
@@ -1237,6 +1475,11 @@ class PassportService(WorkflowService):
                 provider = "GEMINI"
             finally:
                 self.ai_slot.release()
+        current = self.listing(identity, ws, payload["registration_id"], payload["period"])
+        if digest(current) != digest(view):
+            raise APIError(
+                409, "EVIDENCE_CHANGED", "Saved facts changed. Ask for a fresh briefing."
+            )
         return {"answer": answer, "provider": provider, "metrics": view["metrics"], "tasks": tasks}
 
     def scenario(self, identity, ws, pid, payload):
@@ -1293,7 +1536,7 @@ class PassportService(WorkflowService):
             )
             if not parsed["accepted"]:
                 raise APIError(
-                    422, "INVOICE_INVALID", "Invoice details cannot produce a demo statement."
+                    422, "INVOICE_INVALID", "Invoice details cannot produce a sample statement."
                 )
             content = encode({"simulation": True, "invoice": raw}).encode()
             file_id = self.identifier()
@@ -1434,6 +1677,8 @@ class PassportService(WorkflowService):
                     (ws, event["actor_id"]),
                 ).fetchone()
                 if not allowed:
+                    continue
+                if actor_role(con, event["actor_id"], ws) not in {"CA", "FOLLOWUP"}:
                     continue
                 view = self.project(con, row)
                 previous = con.execute(
@@ -1581,6 +1826,23 @@ class PassportService(WorkflowService):
                 provider = "GEMINI"
             finally:
                 self.ai_slot.release()
+        # Revalidate access and saved facts after a potentially slow AI request.
+        with self.store.transaction(write=False) as con:
+            self.authorize(con, identity, ws)
+            current = self.project(con, self.row(con, ws, pid))
+            if current["source_signature"] != view["source_signature"]:
+                raise APIError(
+                    409, "EVIDENCE_CHANGED", "Invoice evidence changed. Request a new draft."
+                )
+            if case:
+                current_case = self.cases.scoped(con, "cases", ws, case["id"])
+                if (
+                    current_case["version"] != case["version"]
+                    or self.cases.sources_current(con, current_case) != case["sources_current"]
+                ):
+                    raise APIError(
+                        409, "EVIDENCE_CHANGED", "Notice evidence changed. Request a new draft."
+                    )
         return {
             "status": "DRAFT_FOR_REVIEW",
             "provider": provider,
@@ -1663,6 +1925,7 @@ class PassportService(WorkflowService):
         """Persist a simulated gateway result; never writes actual payment facts."""
         with self.store.transaction() as con:
             self.authorize(con, identity, ws, mutation=True)
+            require_role(self.access, con, identity, ws, {"CA", "CFO"})
             route = "passport-demo-bank/" + pid
             row = self.row(con, ws, pid)
             if self.operation(con, identity, ws, route, request_id, payload):
@@ -1683,7 +1946,7 @@ class PassportService(WorkflowService):
             elif amount > allowed:
                 reason = "The requested amount exceeds the permitted release. The rest stays held."
             else:
-                status, reason = "RELEASED", "Permitted amount released in the demo ledger."
+                status, reason = "RELEASED", "Permitted amount released in the simulated ledger."
             facts = {
                 "status": status,
                 "amount": money_string(amount),

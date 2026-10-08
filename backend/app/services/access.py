@@ -2,11 +2,13 @@
 
 import hashlib
 import hmac
+import json
 import re
 import secrets
 import sqlite3
 import threading
 import time
+import unicodedata
 from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
@@ -20,8 +22,11 @@ ROLES = {"OWNER", "REVIEWER", "VIEWER"}
 
 
 def username_value(value: str) -> str:
-    if not re.fullmatch(r"[a-z0-9][a-z0-9_.-]{2,63}", value):
-        raise ValueError("Username must be 3-64 lowercase ASCII letters, digits or ._-.")
+    value = unicodedata.normalize("NFKC", value).strip().casefold()
+    if not value or len(value) > 64 or not value.isprintable():
+        raise ValueError(
+            "Choose a nonempty username up to 64 characters without control characters."
+        )
     return value
 
 
@@ -32,8 +37,10 @@ def name_value(value: str) -> str:
 
 
 def password_value(value: str) -> str:
-    if not 12 <= len(value) <= 128 or len(value.encode("utf-8")) > 512:
-        raise ValueError("Password must be 12-128 characters (at most 512 UTF-8 bytes).")
+    if not value.strip() or len(value) > 128 or len(value.encode("utf-8")) > 512:
+        raise ValueError(
+            "Choose a nonempty password up to 128 characters (at most 512 UTF-8 bytes)."
+        )
     return value
 
 
@@ -64,6 +71,7 @@ class Identity:
     expires_at: int
     session_hash: str = field(repr=False)
     csrf_token: str = field(repr=False)
+    portal: str | None = field(default=None, kw_only=True)
 
 
 @dataclass(frozen=True)
@@ -82,7 +90,7 @@ class AccessService:
         self.clock = time.time
 
     def provision(self, username: str, password: str, workspace_name: str) -> tuple[str, str]:
-        username_value(username)
+        username = username_value(username)
         password_value(password)
         workspace_name = name_value(workspace_name)
         salt = secrets.token_bytes(16)
@@ -123,7 +131,7 @@ class AccessService:
         return user_id, workspace_id
 
     def reset_password(self, username: str, password: str) -> None:
-        username_value(username)
+        username = username_value(username)
         password_value(password)
         salt = secrets.token_bytes(16)
         digest = password_digest(password, salt)
@@ -140,7 +148,7 @@ class AccessService:
             connection.execute("DELETE FROM sessions WHERE user_id=?", (row[0],))
 
     def grant(self, username: str, workspace_id: str, role: str, *, active: bool = True) -> None:
-        username_value(username)
+        username = username_value(username)
         workspace_id = str(UUID(workspace_id))
         if role not in ROLES:
             raise ValueError("Invalid membership role.")
@@ -224,8 +232,31 @@ class AccessService:
                 (bucket, now),
             )
 
-    def login(self, username: str, password: str) -> tuple[str, Identity]:
-        username_value(username)
+    def portal_memberships(self, connection, user_id, portal):
+        from app.security.roles import STAFF
+
+        rows = connection.execute(
+            "SELECT m.workspace_id,m.role,p.roles_json FROM memberships m "
+            "JOIN users u ON u.id=m.user_id LEFT JOIN team_profile p "
+            "ON p.workspace_id=m.workspace_id AND p.user_id=m.user_id "
+            "WHERE m.user_id=? AND m.active=1 AND u.active=1",
+            (user_id,),
+        ).fetchall()
+        allowed = set()
+        for member in rows:
+            if portal == "owner":
+                if member["role"] == "OWNER":
+                    allowed.add(member["workspace_id"])
+            elif member["role"] != "OWNER" and member["roles_json"]:
+                roles = json.loads(member["roles_json"])
+                if isinstance(roles, list) and len(roles) == 1 and roles[0] in STAFF:
+                    allowed.add(member["workspace_id"])
+        return allowed
+
+    def login(
+        self, username: str, password: str, portal: str | None = None
+    ) -> tuple[str, Identity]:
+        username = username_value(username)
         password_value(password)
         with self.store.transaction() as connection:
             self.rate(connection, "login:global", 30, 60)
@@ -240,7 +271,19 @@ class AccessService:
             self.hash_slot.release()
         if row is None or not row["active"] or not hmac.compare_digest(digest, row["digest"]):
             raise APIError(401, "INVALID_CREDENTIALS", "Username or password is incorrect.")
-        token = secrets.token_urlsafe(32)
+        with self.store.transaction(write=False) as connection:
+            if portal is None:
+                portal = (
+                    "owner" if self.portal_memberships(connection, row["id"], "owner") else "team"
+                )
+            if not self.portal_memberships(connection, row["id"], portal):
+                raise APIError(
+                    403,
+                    "PORTAL_FORBIDDEN",
+                    "Use business owner sign-in for an owner account, or team member sign-in "
+                    "for an active account registered by your owner.",
+                )
+        token = ("o." if portal == "owner" else "t.") + secrets.token_urlsafe(32)
         now = int(self.clock())
         with self.store.transaction() as connection:
             current = connection.execute(
@@ -248,6 +291,12 @@ class AccessService:
             ).fetchone()
             if current is None or not current["active"] or current["version"] != row["version"]:
                 raise APIError(401, "INVALID_CREDENTIALS", "Username or password is incorrect.")
+            if not self.portal_memberships(connection, row["id"], portal):
+                raise APIError(
+                    403,
+                    "TEAM_REGISTRATION_REQUIRED",
+                    "Ask your owner to register your account and role before signing in.",
+                )
             connection.execute(
                 "DELETE FROM sessions WHERE expires_at<=? OR user_id=?", (now, row["id"])
             )
@@ -266,10 +315,11 @@ class AccessService:
             now + self.settings.session_ttl_seconds,
             token_digest(token),
             csrf_value(token),
+            portal=portal,
         )
 
     def identity(self, token: str, *, mutation: bool = False) -> Identity:
-        if not re.fullmatch(r"[A-Za-z0-9_-]{43}", token):
+        if not re.fullmatch(r"(?:[ot]\.)?[A-Za-z0-9_-]{43}", token):
             raise APIError(401, "AUTH_REQUIRED", "Sign-in is required.")
         hashed = token_digest(token)
         with self.store.transaction() as connection:
@@ -283,6 +333,19 @@ class AccessService:
             ).fetchone()
             if row is None:
                 raise APIError(401, "AUTH_REQUIRED", "Sign-in is required.")
+            portal = (
+                "owner" if token.startswith("o.") else "team" if token.startswith("t.") else None
+            )
+            if portal is None:
+                portal = (
+                    "owner" if self.portal_memberships(connection, row["id"], "owner") else "team"
+                )
+            if not self.portal_memberships(connection, row["id"], portal):
+                raise APIError(
+                    401,
+                    "TEAM_REGISTRATION_REQUIRED",
+                    "Your team access is no longer active. Ask your owner to register or enable your account.",
+                )
             self.rate(
                 connection,
                 ("mutation:" if mutation else "read:") + hashed,
@@ -291,7 +354,9 @@ class AccessService:
                 else self.settings.read_requests_per_minute,
                 60,
             )
-        return Identity(row["id"], row["username"], row["expires_at"], hashed, csrf_value(token))
+        return Identity(
+            row["id"], row["username"], row["expires_at"], hashed, csrf_value(token), portal=portal
+        )
 
     def require_membership(self, connection, identity: Identity, workspace_id: str, *, roles=ROLES):
         if isinstance(identity, LinkedIdentity):
@@ -315,12 +380,25 @@ class AccessService:
         ).fetchone()
         if row is None:
             raise APIError(404, "NOT_FOUND", "Resource was not found.")
+        if identity.portal and workspace_id not in self.portal_memberships(
+            connection, identity.user_id, identity.portal
+        ):
+            raise APIError(
+                403,
+                "PORTAL_FORBIDDEN",
+                "This workspace does not belong to your current sign-in portal.",
+            )
         if row["role"] not in roles:
             raise APIError(403, "ROLE_FORBIDDEN", "Your role does not permit this operation.")
         return row["role"]
 
     def workspaces(self, identity: Identity) -> list[dict]:
         with self.store.transaction(write=False) as connection:
+            allowed = (
+                self.portal_memberships(connection, identity.user_id, identity.portal)
+                if identity.portal
+                else None
+            )
             return [
                 dict(row)
                 for row in connection.execute(
@@ -330,6 +408,7 @@ class AccessService:
                     "AND u.active=1 AND s.token_hash=? AND s.expires_at>? ORDER BY w.id",
                     (identity.user_id, identity.session_hash, int(self.clock())),
                 ).fetchall()
+                if allowed is None or row["id"] in allowed
             ]
 
     def registrations(self, identity: Identity, workspace_id: str) -> list[dict]:

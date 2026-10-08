@@ -5,6 +5,7 @@ import re
 
 from app.adapters.whatsapp import ProviderError
 from app.errors import APIError
+from app.security.roles import permitted_roles, require_role
 from app.services.whatsapp import HELP, operation_key
 
 MIMES = {
@@ -17,10 +18,33 @@ class WhatsAppCommands:
     def __init__(self, channel):
         self.channel = channel
 
+    def authorize_command(self, connection, identity, workspace, event, command):
+        # The phone channel must enforce the same assigned-role policy as HTTP.
+        suffix = (
+            "imports"
+            if event["kind"] == "DOCUMENT" or command in {"UPLOAD PURCHASE", "UPLOAD 2B"}
+            else "runs"
+            if command == "RUN"
+            else "reports"
+            if command == "REPORT"
+            else "runs"
+            if command == "STATUS"
+            else None
+        )
+        if suffix:
+            require_role(
+                self.channel.access,
+                connection,
+                identity,
+                workspace,
+                permitted_roles(suffix, command != "STATUS"),
+            )
+
     def prepare(self, connection, event, data, link):
         channel = self.channel
         identity = channel.identity(link)
         command = data.get("command")
+        self.authorize_command(connection, identity, link["workspace_id"], event, command)
         if "prepared" in data:
             return data["prepared"]
         if event["kind"] == "DOCUMENT":
@@ -178,6 +202,7 @@ class WhatsAppCommands:
                 return
             identity = channel.identity(link)
             channel.access.require_membership(connection, identity, link["workspace_id"])
+            self.authorize_command(connection, identity, link["workspace_id"], event, command)
             context = channel.context_label(connection, link)
             if command == "UNLINK":
                 channel.invalidate(connection, link, revoke=True)
@@ -408,7 +433,11 @@ class WhatsAppCommands:
             ).fetchall()
             for watch in rows:
                 link = channel.link_row(connection, watch["link_id"])
-                if link is None or link["version"] != watch["link_version"]:
+                if (
+                    link is None
+                    or link["version"] != watch["link_version"]
+                    or (watch["kind"] != "IMPORT" and not channel.report_allowed(connection, link))
+                ):
                     connection.execute(
                         "UPDATE wa_watches SET state='DONE' WHERE logical_key=?",
                         (watch["logical_key"],),

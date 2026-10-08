@@ -22,6 +22,9 @@ def main() -> int:
         host=settings.host,
         port=settings.port,
         workers=1,
+        limit_concurrency=64,
+        timeout_keep_alive=5,
+        timeout_graceful_shutdown=30,
         log_level=settings.log_level.lower(),
         access_log=False,  # URLs may eventually contain bearer download capabilities.
         proxy_headers=False,

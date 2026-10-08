@@ -26,6 +26,32 @@ class CaseService(WorkflowService):
             )
         ]
 
+    def observation_current(self, connection, row, event):
+        raw = event["evidence_json"]
+        if not raw:
+            return True
+        source = json.loads(raw)
+        current = connection.execute(
+            "SELECT * FROM imports WHERE workspace_id=? AND id=?",
+            (row["workspace_id"], source["id"]),
+        ).fetchone()
+        return bool(
+            current
+            and current["state"] == "READY"
+            and all(
+                current[name] == source[name]
+                for name in ("version", "file_sha256", "adapter_version", "provenance")
+            )
+        )
+
+    def sources_current(self, connection, row):
+        refs = set(json.loads(row["facts_json"])["observation_refs"])
+        return all(
+            self.observation_current(connection, row, event)
+            for event in self.events(connection, row)
+            if event["id"] in refs
+        )
+
     def evidence_kinds(self, connection, row):
         refs = set(json.loads(row["facts_json"])["observation_refs"])
         facts = json.loads(row["facts_json"])
@@ -46,8 +72,12 @@ class CaseService(WorkflowService):
         kinds = set()
         for event in self.events(connection, row):
             saved = json.loads(event["facts_json"])
-            if event["id"] in refs and all(
-                saved.get(name) == facts.get(name) for name in fields.get(event["kind"], ())
+            if (
+                event["id"] in refs
+                and self.observation_current(connection, row, event)
+                and all(
+                    saved.get(name) == facts.get(name) for name in fields.get(event["kind"], ())
+                )
             ):
                 kinds.add(event["kind"])
         return kinds
@@ -57,9 +87,15 @@ class CaseService(WorkflowService):
         data["amount"] = money_string(data["amount"])
         data["facts"] = json.loads(data.pop("facts_json"))
         data.pop("created_by")
+        data["stored_state"] = data["state"]
+        data["sources_current"] = self.sources_current(connection, row)
+        if not data["sources_current"]:
+            data["state"] = "EVIDENCE_REQUIRED"
         data["missing_facts"] = missing_facts(
             row["kind"], data["facts"], self.evidence_kinds(connection, row)
         )
+        if not data["sources_current"]:
+            data["missing_facts"].append("Current replacement for superseded observation evidence")
         irn = data["facts"].get("irn")
         data["irn_observation"] = (
             "NOT_PROVIDED"
@@ -188,6 +224,8 @@ class CaseService(WorkflowService):
                 row["state"],
                 row["provenance"],
             )
+            if not self.sources_current(connection, row):
+                state = "EVIDENCE_REQUIRED"
             event_id, import_id = self.identifier(), None
             evidence_source = None
             if transition:
@@ -200,8 +238,9 @@ class CaseService(WorkflowService):
                 target = payload["state"]
                 if target not in permitted[state]:
                     raise APIError(409, "INVALID_TRANSITION", "Case transition is not permitted.")
-                if target == "REVIEW_READY" and missing_facts(
-                    row["kind"], facts, self.evidence_kinds(connection, row)
+                if target in {"REVIEW_READY", "CLOSED"} and (
+                    not self.sources_current(connection, row)
+                    or missing_facts(row["kind"], facts, self.evidence_kinds(connection, row))
                 ):
                     raise APIError(
                         409, "EVIDENCE_REQUIRED", "Required facts or evidence are missing."
@@ -215,6 +254,10 @@ class CaseService(WorkflowService):
                     imported = self.imports.scoped(
                         connection, identity, workspace, import_id, mutation=True
                     )
+                    if imported["state"] != "READY":
+                        raise APIError(
+                            409, "SOURCE_NOT_READY", "Confirm the evidence source first."
+                        )
                     if imported["registration_id"] != row["registration_id"]:
                         raise APIError(422, "EVIDENCE_CONTEXT", "Evidence registration differs.")
                     evidence_source = {

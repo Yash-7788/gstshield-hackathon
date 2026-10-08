@@ -57,9 +57,9 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       headers: {
         ...headers,
-        "Content-Security-Policy": `default-src 'self'; connect-src 'self' ${target.origin} http://localhost:8000 http://127.0.0.1:8000; style-src 'self'; img-src 'self' data:; font-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`,
+        "Content-Security-Policy": `default-src 'self'; connect-src 'self' ${target.origin} http://localhost:8000 http://127.0.0.1:8000; style-src 'self' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`,
       },
     },
-    build: { target: "es2022", sourcemap: false },
+    build: { target: "es2022", sourcemap: false, rollupOptions: { input: { workspace: "index.html", landing: "landing.html" } } },
   };
 });

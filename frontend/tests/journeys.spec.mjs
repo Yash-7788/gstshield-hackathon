@@ -1,3 +1,4 @@
+import { openSection } from "./navigation.mjs";
 import { test, expect } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 const ROW = {
@@ -39,7 +40,7 @@ async function signIn(page, period) {
   await page.getByLabel("Accounting month", { exact: true }).fill(period);
 }
 async function section(page, name) {
-  await page.getByRole("link", { name, exact: true }).click();
+  await openSection(page, name);
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
 }
 async function send(page, suffix, click) {
@@ -398,7 +399,9 @@ test("missing recorded GST persists across newer supplier snapshots without reup
     run.workspace_id,
     "imports?period=2024-05&kind=PURCHASE",
   );
-  expect(imports.imports).toHaveLength(1);
+  expect(
+    imports.imports.filter((i) => i.file_sha256 === purchase.file_sha256),
+  ).toHaveLength(1);
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "Work queue", exact: true }),
@@ -570,7 +573,19 @@ test("reversed credit, IRN and notice evidence retain truthful human review and 
 test("real role/context switches, delayed old reply, unavailable sign-out and refresh clear private state", async ({
   page,
 }) => {
-  await signIn(page, "2024-05");
+  test.setTimeout(90000);
+  await signIn(page, "2024-09");
+  const purchase = await upload(page, "PURCHASE", {
+    ...ROW,
+    invoice_number: "CONTEXT-REVIEW",
+    invoice_date: "2024-09-05",
+  });
+  const portal = await upload(page, "PORTAL_2B", {
+    ...ROW,
+    invoice_number: "CONTEXT-OTHER",
+    invoice_date: "2024-09-05",
+  });
+  await compare(page, purchase, portal);
   await section(page, "Work queue");
   await expect(
     page.getByRole("row").filter({ hasText: "INVOICE_REVIEW" }),
@@ -597,7 +612,11 @@ test("real role/context switches, delayed old reply, unavailable sign-out and re
   await page
     .getByRole("combobox", { name: "Workspace", exact: true })
     .selectOption({ label: "Other workspace · viewer" });
-  await expect(page.getByText("You have read-only access.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Financial records are read-only. Your approved shared-work actions remain available.",
+    ),
+  ).toBeVisible();
   await section(page, "Sources");
   await expect(
     page.getByRole("button", { name: "Upload source", exact: true }),
@@ -685,17 +704,25 @@ test("stale reviewer gets conflict then reloads, summary and report show persist
 }) => {
   test.setTimeout(90000);
   await signIn(page, "2024-05");
-  await section(page, "Reconciliation");
-  const wsResponse = await page.request.get(`${api}/api/v1/workspaces`);
-  const ws = (await wsResponse.json()).data.find((x) => x.role === "OWNER").id;
-  const runs = await get(page, ws, "runs?period=2024-05");
-  const run = runs.runs.find((x) => x.state === "COMPLETED");
+  const row = {
+    ...ROW,
+    invoice_number: "CONCURRENT-CASE",
+    taxable_value: "100000.00",
+    cgst: "10000.00",
+    sgst: "10000.00",
+    gross_total: "120000.00",
+  };
+  const purchase = await upload(page, "PURCHASE", row);
+  const portal = await upload(page, "PORTAL_2B", row);
+  const run = await compare(page, purchase, portal);
+  const ws = run.workspace_id;
   await page
     .getByRole("row")
     .filter({ hasText: run.id.slice(0, 8) })
     .getByRole("button", { name: "Open comparison", exact: true })
     .click();
   await page.getByRole("button", { name: "Open result", exact: true }).click();
+  expect(run).toBeDefined();
   const result = (await get(page, ws, `runs/${run.id}/results`)).results[0];
   const session = (
     await (await page.request.get(`${api}/api/v1/auth/session`)).json()
@@ -744,9 +771,18 @@ test("stale reviewer gets conflict then reloads, summary and report show persist
     form.getByRole("button", { name: "Save review", exact: true }).click(),
   );
   await expect(
-    page.getByText("₹20,000.00", { exact: true }).first(),
+    page
+      .getByText(
+        "₹" +
+          Number(result.canonical.total_tax).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        { exact: true },
+      )
+      .first(),
   ).toBeVisible();
   const current = await get(page, ws, `runs/${run.id}`);
-  expect(current.summary.tax_exposure_review).toBe("20000.00");
+  expect(current.summary.tax_exposure_review).toBe(result.canonical.total_tax);
   await report(page, "RECONCILIATION_PDF", current);
 });

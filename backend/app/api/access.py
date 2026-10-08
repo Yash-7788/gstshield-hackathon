@@ -50,6 +50,18 @@ def authenticated(request: Request, *, mutation: bool = False) -> Identity:
             headers[0].encode(), identity.csrf_token.encode()
         ):
             raise APIError(403, "CSRF_INVALID", "Refresh the website session and retry.")
+    workspace_id = request.path_params.get("workspace_id")
+    if workspace_id is not None:
+        from app.security.roles import enforce_request
+
+        suffix = request.url.path.split("/workspaces/", 1)[1].split("/", 1)
+        enforce_request(
+            service(request),
+            identity,
+            str(workspace_id),
+            suffix[1] if len(suffix) > 1 else "",
+            mutation,
+        )
     return identity
 
 
@@ -63,6 +75,7 @@ def session_data(identity: Identity) -> dict:
         "username": identity.username,
         "expires_at": identity.expires_at,
         "csrf_token": identity.csrf_token,
+        "portal": identity.portal,
     }
 
 
@@ -74,7 +87,9 @@ def login(request: Request, payload: LoginRequest, response: Response) -> dict:
         != "application/json"
     ):
         raise APIError(415, "JSON_REQUIRED", "Send an application/json request.")
-    token, identity = service(request).login(payload.username, payload.password.get_secret_value())
+    token, identity = service(request).login(
+        payload.username, payload.password.get_secret_value(), payload.portal
+    )
     response.set_cookie(
         COOKIE,
         token,

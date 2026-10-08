@@ -1,0 +1,40 @@
+{
+  "framing": "Connected evidence, deliberate decisions, payment control, follow-up and retained history.",
+  "columns": [
+    "ClearTax",
+    "Tally",
+    "Zoho",
+    "GSTShield"
+  ],
+  "rows": [
+    {
+      "capability": "Invoice evidence",
+      "ClearTax": "OWNER_TO_FILL",
+      "Tally": "OWNER_TO_FILL",
+      "Zoho": "OWNER_TO_FILL",
+      "GSTShield": "Saved bill, purchase order, receipt and GST statement"
+    },
+    {
+      "capability": "Payment control",
+      "ClearTax": "OWNER_TO_FILL",
+      "Tally": "OWNER_TO_FILL",
+      "Zoho": "OWNER_TO_FILL",
+      "GSTShield": "Local simulated gateway with explicit current approval"
+    },
+    {
+      "capability": "Supplier correction",
+      "ClearTax": "OWNER_TO_FILL",
+      "Tally": "OWNER_TO_FILL",
+      "Zoho": "OWNER_TO_FILL",
+      "GSTShield": "Saved follow-up, recheck and audit history; live delivery needs setup"
+    },
+    {
+      "capability": "Tax review",
+      "ClearTax": "OWNER_TO_FILL",
+      "Tally": "OWNER_TO_FILL",
+      "Zoho": "OWNER_TO_FILL",
+      "GSTShield": "Cited review suggestions; no portal submissions"
+    }
+  ],
+  "status": "Competitor facts require verified sources before publication."
+}

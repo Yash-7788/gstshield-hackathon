@@ -8,7 +8,7 @@ test("built website signs in, uploads and confirms through configured local API 
     if (/Content Security Policy|violates.*directive/i.test(m.text()))
       cspErrors.push(m.text());
   });
-  const response = await page.goto("/");
+  const response = await page.goto("/#Sources");
   expect(response.headers()["content-security-policy"]).toContain(
     "http://127.0.0.1:8027",
   );

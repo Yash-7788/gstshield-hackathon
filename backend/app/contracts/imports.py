@@ -24,7 +24,9 @@ class UploadMetadata(BaseModel):
     kind: Literal["PURCHASE", "PORTAL_2B"]
     registration_id: UUID
     period: str
-    adapter_version: Literal["csv-v1", "xlsx-v1", "canonical-demo-v1"]
+    adapter_version: Literal[
+        "csv-v1", "xlsx-v1", "canonical-demo-v1", "gst-2b-json-v1", "five-column-v1"
+    ]
     sheet_name: str | None = Field(default=None, max_length=128)
     mapping: dict[str, str] = Field(default_factory=dict, max_length=50)
     supersedes_import_id: UUID | None = None
@@ -55,7 +57,11 @@ class UploadMetadata(BaseModel):
         if self.adapter_version == "canonical-demo-v1" and (
             self.kind != "PORTAL_2B" or self.mapping
         ):
-            raise ValueError("Demo JSON is a fixed portal adapter")
+            raise ValueError("Sample JSON is a fixed portal adapter")
+        if self.adapter_version == "gst-2b-json-v1" and (self.kind != "PORTAL_2B" or self.mapping):
+            raise ValueError("GST statement JSON requires fixed portal mapping")
+        if self.adapter_version == "five-column-v1" and (self.kind != "PURCHASE" or self.mapping):
+            raise ValueError("Five-column register requires fixed purchase mapping")
         if self.adapter_version != "xlsx-v1" and self.sheet_name is not None:
             raise ValueError("Only XLSX accepts sheet selection")
         if self.sheet_name is not None and (
@@ -85,6 +91,21 @@ class ImportConfirm(BaseModel):
     expected_version: StrictInt = Field(gt=0)
     allow_rejected_rows: StrictBool = False
     confirmed_supersession: StrictBool = False
+
+
+class ImportRemove(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_version: StrictInt = Field(ge=1)
+
+
+class ImportRemoveData(BaseModel):
+    id: UUID
+    removed: bool
+
+
+class ImportRemoveResponse(BaseModel):
+    data: ImportRemoveData
+    meta: Meta
 
 
 class ImportData(BaseModel):

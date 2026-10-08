@@ -251,7 +251,14 @@ def test_demo_bank_blocks_full_payment_preserves_tax_and_requires_fresh_approval
     channel, monkeypatch
 ):
     client, _, base, pid, invoice, post = create_invoice(channel, monkeypatch)
-    invoice = post("clocks", {"expected_version": invoice["version"], "amount_paid": "0.00"})
+    invoice = post(
+        "clocks",
+        {
+            "expected_version": invoice["version"],
+            "amount_paid": "0.00",
+            "payment_observed_on": "2024-05-10",
+        },
+    )
 
     def bank(amount, key=None, payload=None):
         nonlocal invoice

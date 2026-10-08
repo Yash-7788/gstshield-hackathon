@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Schemas } from "./contracts";
 import InvoiceItems, { itemsFrom } from "./InvoiceItems";
+import { InvoiceGuide } from "./GuidedHelp";
+import InvoiceReview from "./InvoiceReview";
 import type { InvoiceNavigate } from "./InvoiceJourney";
 import {
   Field,
@@ -179,8 +181,10 @@ export default function CommandCenter({
   return (
     <section className="command-center">
       <header>
-        <h2>Invoice desk</h2>
-        <p>Follow a bill from arrival to a reviewed payment decision.</p>
+        <h2>One invoice. Every next step.</h2>
+        <p>
+          Bring in the bill, connect its evidence and review what happens next.
+        </p>
       </header>
       <nav className="desk-tabs" aria-label="Invoice desk tools">
         {["Invoices", "Suppliers", "Finance", "Watch & outcomes"].map(
@@ -206,7 +210,7 @@ export default function CommandCenter({
       {tab === "Invoices" && (
         <>
           <details className="card" open={!invoices.length}>
-            <summary>Add an invoice</summary>
+            <summary>Start with an invoice</summary>
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -589,7 +593,7 @@ export default function CommandCenter({
                                 .map((s) => (
                                   <option key={s.id} value={s.id}>
                                     {s.provenance === "SYNTHETIC_DEMO"
-                                      ? "Demo statement"
+                                      ? "Sample statement"
                                       : "Uploaded statement"}{" "}
                                     · {s.id.slice(0, 8)}
                                   </option>
@@ -638,7 +642,9 @@ export default function CommandCenter({
                                 : null,
                               claimed_on: data.claimed_on || null,
                               supplier_3b_due_on: data.supplier_due || null,
-                              amount_paid: data.paid || "0.00",
+                              amount_paid: data.paid || null,
+                              payment_observed_on:
+                                data.payment_observed_on || null,
                               note: data.note || "",
                             });
                           }}
@@ -668,10 +674,13 @@ export default function CommandCenter({
                             value={
                               display(
                                 nested(current.clocks.facts).amount_paid,
-                              ) || "0.00"
+                              ) || ""
                             }
                           >
                             Already paid
+                          </Field>
+                          <Field name="payment_observed_on" type="date">
+                            Payment checked on
                           </Field>
                           <Field name="note">Note</Field>
                           <button disabled={!canWrite || action.busy}>
@@ -756,20 +765,22 @@ export default function CommandCenter({
                       </form>
                     </section>
                     <details className="card">
-                      <summary>Demo bank — test the payment protection</summary>
+                      <summary>
+                        Simulated bank — check payment protection
+                      </summary>
                       <Notice>
                         Simulated money. This does not contact a bank or change
                         recorded real payments.
                       </Notice>
                       <div className="desk-stats">
                         <div>
-                          Demo money released
+                          Simulated money released
                           <strong>
                             {money(nested(current.demo_bank).released_amount)}
                           </strong>
                         </div>
                         <div>
-                          Demo balance held
+                          Simulated balance held
                           <strong>
                             {money(nested(current.demo_bank).remaining_amount)}
                           </strong>
@@ -815,7 +826,7 @@ export default function CommandCenter({
                             })
                           }
                         >
-                          Release permitted demo amount
+                          Release permitted simulated amount
                         </button>
                       </div>
                       {nested(current.demo_bank).last_attempt != null && (
@@ -829,7 +840,7 @@ export default function CommandCenter({
                             {nested(nested(current.demo_bank).last_attempt)
                               .status === "BLOCKED"
                               ? "Payment blocked"
-                              : "Demo payment released"}
+                              : "Simulated payment released"}
                           </strong>{" "}
                           ·{" "}
                           {money(
@@ -844,7 +855,7 @@ export default function CommandCenter({
                         </Notice>
                       )}
                       <details>
-                        <summary>Demo transfer history</summary>
+                        <summary>Simulated transfer history</summary>
                         {Array.isArray(nested(current.demo_bank).attempts) &&
                           (nested(current.demo_bank).attempts as Result[]).map(
                             (attempt, index) => (
@@ -1202,6 +1213,16 @@ export default function CommandCenter({
         </>
       )}
 
+      {tab === "Invoices" && current && (
+        <>
+          <InvoiceGuide c={c} invoice={current} />
+          <InvoiceReview
+            key={current.id + current.source_signature}
+            c={c}
+            invoice={current}
+          />
+        </>
+      )}
       {tab === "Suppliers" && (
         <>
           <section className="card">
@@ -1562,7 +1583,7 @@ export default function CommandCenter({
             )}
           </section>
           <details className="card">
-            <summary>Demo GST fetching</summary>
+            <summary>Sample GST records</summary>
             <Notice>
               Simulation: these controls create sample GST records. They do not
               connect to the government.

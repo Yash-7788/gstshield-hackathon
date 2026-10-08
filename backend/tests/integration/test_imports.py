@@ -21,8 +21,7 @@ PASSWORD = "synthetic-passphrase-only"
 ORIGIN = "http://localhost:3000"
 
 
-@pytest.fixture
-def account():
+def make_account():
     settings = Settings(
         app_env="test",
         read_requests_per_minute=2000,
@@ -35,6 +34,27 @@ def account():
     access = AccessService(store)
     user, workspace = access.provision("alice", PASSWORD, "Imports")
     registration = access.add_registration(workspace, "27ABCDE1234F1Z5", "Synthetic")
+    store.close()
+    return settings, user, workspace, registration
+
+
+@pytest.fixture
+def owner_account():
+    return make_account()
+
+
+@pytest.fixture
+def account():
+    """A genuine CA performs accounting workflows; owners only oversee them."""
+    settings, user, workspace, registration = make_account()
+    store = LocalStore(settings)
+    store.acquire()
+    store.initialize()
+    AccessService(store).grant("alice", workspace, "REVIEWER")
+    with store.transaction() as con:
+        con.execute(
+            "INSERT INTO team_profile VALUES(?,?,?,?,1)", (workspace, user, "Alice CA", '["CA"]')
+        )
     store.close()
     return settings, user, workspace, registration
 

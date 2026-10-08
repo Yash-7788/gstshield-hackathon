@@ -12,19 +12,40 @@ def normalized(value):
 
 
 def grouped(items, use_sku):
-    result = defaultdict(lambda: {"quantity": Decimal(0), "value": 0, "units": set(), "name": ""})
+    result = defaultdict(
+        lambda: {
+            "quantity": Decimal(0),
+            "value": 0,
+            "value_known": True,
+            "units": set(),
+            "name": "",
+        }
+    )
     for item in items:
         key = normalized(item["sku"] if use_sku else item["description"])
         row = result[key]
         row["quantity"] += Decimal(item["quantity"])
-        row["value"] += money_paise(item["taxable_value"], "taxable_value")
+        value = (
+            money_paise(item["taxable_value"], "taxable_value")
+            if item.get("taxable_value") is not None
+            else None
+        )
+        row["value_known"] &= value is not None
+        if value is not None:
+            row["value"] += value
         row["units"].add(normalized(item.get("unit", "")))
         row["name"] = item["description"]
     return result
 
 
 def compare_items(invoice, evidence):
-    header_match = Decimal(invoice["taxable_value"]) == Decimal(evidence["taxable_value"])
+    receipt_quantity_only = (
+        evidence.get("kind") == "RECEIPT" and evidence.get("taxable_value") is None
+    )
+    header_match = receipt_quantity_only or (
+        evidence.get("taxable_value") is not None
+        and Decimal(invoice["taxable_value"]) == Decimal(evidence["taxable_value"])
+    )
     if invoice.get("quantity") and evidence.get("quantity"):
         header_match &= Decimal(invoice["quantity"]) == Decimal(evidence["quantity"])
     left, right = invoice.get("items", []), evidence.get("items", [])
@@ -45,7 +66,13 @@ def compare_items(invoice, evidence):
             inv
             and other
             and inv["quantity"] == other["quantity"]
-            and inv["value"] == other["value"]
+            and (
+                receipt_quantity_only
+                and not other["value_known"]
+                or inv["value_known"]
+                and other["value_known"]
+                and inv["value"] == other["value"]
+            )
         )
         units = (inv["units"] | other["units"]) - {""} if inv and other else set()
         unit_unknown = bool(inv and other and ("" in inv["units"] or "" in other["units"]))
@@ -59,7 +86,9 @@ def compare_items(invoice, evidence):
                 "invoice_quantity": str(inv["quantity"]) if inv else None,
                 "record_quantity": str(other["quantity"]) if other else None,
                 "invoice_value": money_string(inv["value"]) if inv else None,
-                "record_value": money_string(other["value"]) if other else None,
+                "record_value": money_string(other["value"])
+                if other and other["value_known"]
+                else None,
             }
         )
     status = (

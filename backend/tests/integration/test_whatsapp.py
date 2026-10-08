@@ -72,6 +72,11 @@ def channel():
     access = AccessService(store)
     user, workspace = access.provision("alice", "synthetic-passphrase-only", "Channel")
     registration = access.add_registration(workspace, "27ABCDE1234F1Z5", "Synthetic company")
+    access.grant("alice", workspace, "REVIEWER")
+    with store.transaction() as con:
+        con.execute(
+            "INSERT INTO team_profile VALUES(?,?,?,?,1)", (workspace, user, "Channel CA", '["CA"]')
+        )
     store.close()
     with TestClient(create_app(settings)) as client:
         # Run deterministically without a competing channel loop.

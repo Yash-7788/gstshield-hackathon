@@ -31,6 +31,7 @@ class ProposalService(WorkflowService):
             if (
                 result["version"] != item["result_version"]
                 or case["version"] != item["case_version"]
+                or not self.cases.sources_current(connection, case)
             ):
                 return False
         return True
@@ -120,7 +121,8 @@ class ProposalService(WorkflowService):
                 self.version(case, observation["expected_case_version"])
                 facts = json.loads(case["facts_json"])
                 if (
-                    case["purchase_document_id"] != document
+                    not self.cases.sources_current(connection, case)
+                    or case["purchase_document_id"] != document
                     or case["state"] not in {"REVIEW_READY", "CLOSED"}
                     or "PAYMENT_OBSERVATION" not in self.cases.evidence_kinds(connection, case)
                     or facts.get("amount_paid") is None

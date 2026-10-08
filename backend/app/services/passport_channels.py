@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from uuid import UUID
 
 from app.errors import APIError
+from app.security.roles import actor_role
 from app.services.whatsapp import hashed
 
 
@@ -27,6 +28,8 @@ class PassportChannels:
         return (event, json.loads(event["payload_json"])) if event else (None, {})
 
     def contact(self, con, row):
+        if json.loads(row["extraction_json"]).get("removed_at"):
+            return None
         event, data = self.latest(con, row, ("SUPPLIER_VERIFIED", "SUPPLIER_REVOKED"))
         return (
             data
@@ -72,6 +75,8 @@ class PassportChannels:
         }
 
     def actor_valid(self, con, ws, actor, version):
+        if actor_role(con, actor, ws) not in {"CA", "FOLLOWUP"}:
+            return False
         return (
             con.execute(
                 (
@@ -86,10 +91,10 @@ class PassportChannels:
         )
 
     def invite(self, identity, ws, pid, payload, request_id):
-        self.transport.enabled()
         svc = self.passports
         with svc.store.transaction() as con:
             svc.authorize(con, identity, ws, mutation=True)
+            self.transport.enabled()
             row = svc.row(con, ws, pid)
             route = "passport-supplier-invite/" + pid
             if svc.operation(con, identity, ws, route, request_id, payload):
@@ -140,10 +145,10 @@ class PassportChannels:
             }
 
     def send(self, identity, ws, pid, payload, request_id):
-        self.transport.enabled()
         svc = self.passports
         with svc.store.transaction() as con:
             svc.authorize(con, identity, ws, mutation=True)
+            self.transport.enabled()
             row = svc.row(con, ws, pid)
             route = "passport-supplier-send/" + pid
             if svc.operation(con, identity, ws, route, request_id, payload):
@@ -258,7 +263,9 @@ class PassportChannels:
         if event is None:
             return None
         facts = json.loads(event["payload_json"])
-        row = self.passports.row(con, event["workspace_id"], event["passport_id"])
+        row = self.passports.row(
+            con, event["workspace_id"], event["passport_id"], allow_removed=True
+        )
         contact = self.contact(con, row)
         if (
             not contact
@@ -310,7 +317,9 @@ class PassportChannels:
                 )
             ):
                 return True
-            row = svc.row(con, invited["workspace_id"], invited["passport_id"])
+            row = svc.row(con, invited["workspace_id"], invited["passport_id"], allow_removed=True)
+            if json.loads(row["extraction_json"]).get("removed_at"):
+                return True
             if svc.project(con, row)["source_signature"] != facts["source_signature"]:
                 return True
             actor = SimpleNamespace(user_id=invited["actor_id"])

@@ -109,6 +109,7 @@ def test_connected_demo_all_tools_and_saved_source_change(account, monkeypatch):
                 "claimed_on": "2024-05-20",
                 "supplier_3b_due_on": "2024-06-20",
                 "amount_paid": "0.00",
+                "payment_observed_on": "2024-05-10",
             },
         )
         assert invoice["clocks"]["pay_by"] == "2024-06-09"
@@ -259,13 +260,20 @@ def test_provider_failure_is_saved_and_never_fake_success(account, monkeypatch):
 
 
 def test_upgrade_preserves_version_six_accounts_and_creates_backup(account):
-    from app.storage.local import VERSION6_DIGEST, LocalStore
+    import re
+
+    from app.storage.local import SCHEMA_VERSION, VERSION6_DIGEST, LocalStore
+    from app.storage.product_schema import PRODUCT_SCHEMA
 
     settings, user, ws, _ = account
     store = LocalStore(settings)
     store.acquire()
     try:
         with store.transaction() as connection:
+            for statement in reversed(PRODUCT_SCHEMA):
+                match = re.match(r"CREATE TABLE ([a-z_]+)", statement)
+                if match:
+                    connection.execute("DROP TABLE " + match[1])
             for table in (
                 "passport_decisions",
                 "passport_events",
@@ -281,6 +289,6 @@ def test_upgrade_preserves_version_six_accounts_and_creates_backup(account):
         with store.transaction(write=False) as connection:
             assert connection.execute("SELECT id FROM users WHERE id=?", (user,)).fetchone()
             assert connection.execute("SELECT id FROM workspaces WHERE id=?", (ws,)).fetchone()
-            assert connection.execute("PRAGMA user_version").fetchone()[0] == 7
+            assert connection.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
     finally:
         store.close()

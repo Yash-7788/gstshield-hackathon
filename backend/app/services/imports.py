@@ -7,6 +7,7 @@ import time
 from uuid import uuid4
 
 from app.errors import APIError
+from app.security.roles import require_role
 from app.services.access import AccessService, Identity
 
 WRITE_ROLES = {"OWNER", "REVIEWER"}
@@ -50,6 +51,131 @@ class ImportService:
         if row is None:
             raise APIError(404, "NOT_FOUND", "Resource was not found.")
         return row
+
+    def remove_unused(self, identity, workspace, identifier, payload, key):
+        with self.store.transaction() as con:
+            self.access.require_membership(con, identity, workspace, roles=WRITE_ROLES)
+            require_role(self.access, con, identity, workspace, {"CA", "ACCOUNTS"})
+            route = "import-remove/" + identifier
+            fingerprint = digest(payload)
+            previous = con.execute(
+                "SELECT * FROM workflow_operations WHERE workspace_id=? AND actor_id=? "
+                "AND route=? AND key=?",
+                (workspace, identity.user_id, route, key),
+            ).fetchone()
+            if previous:
+                if previous["request_hash"] != fingerprint:
+                    raise APIError(409, "IDEMPOTENCY_CONFLICT", "Request key already used.")
+                return json.loads(previous["response_json"])
+            row = self.scoped(con, identity, workspace, identifier, mutation=True)
+            if row["version"] != payload["expected_version"]:
+                raise APIError(409, "VERSION_CONFLICT", "Source changed. Refresh before removing.")
+            busy = con.execute(
+                "SELECT 1 FROM jobs WHERE workspace_id=? AND import_id=? AND "
+                "state IN ('QUEUED','RUNNING')",
+                (workspace, identifier),
+            ).fetchone()
+            if busy or row["state"] in {"RECEIVED", "PARSING"}:
+                raise APIError(409, "SOURCE_BUSY", "Wait for source processing to finish.")
+            queries = (
+                "SELECT 1 FROM imports WHERE workspace_id=? AND "
+                "(supersedes_import_id=? OR derived_from_import_id=?)",
+                "SELECT 1 FROM runs WHERE workspace_id=? AND "
+                "(purchase_import_id=? OR portal_import_id=?)",
+                "SELECT 1 FROM invoice_passports WHERE workspace_id=? AND purchase_import_id=?",
+                "SELECT 1 FROM case_events WHERE workspace_id=? AND import_id=?",
+                "SELECT 1 FROM artifacts WHERE workspace_id=? AND import_id=?",
+                "SELECT 1 FROM passport_evidence WHERE workspace_id=? AND "
+                "json_extract(payload_json,'$.import_id')=?",
+                "SELECT 1 FROM product_events WHERE workspace_id=? "
+                "AND kind='GST_STATEMENT_SELECTED' "
+                "AND json_extract(payload_json,'$.import_id')=?",
+            )
+            referenced = any(
+                con.execute(
+                    q + " LIMIT 1", (workspace,) + (identifier,) * (q.count("?") - 1)
+                ).fetchone()
+                for q in queries
+            )
+            pattern = "%" + identifier + "%"
+            if not referenced:
+                referenced = bool(
+                    con.execute(
+                        "SELECT 1 FROM wa_watches w JOIN wa_links l ON l.id=w.link_id "
+                        "WHERE l.workspace_id=? AND w.resource_id=? LIMIT 1",
+                        (workspace, identifier),
+                    ).fetchone()
+                    or con.execute(
+                        "SELECT 1 FROM wa_events e JOIN wa_links l ON l.id=e.link_id "
+                        "WHERE l.workspace_id=? AND e.payload LIKE ? LIMIT 1",
+                        (workspace, pattern),
+                    ).fetchone()
+                    or con.execute(
+                        "SELECT 1 FROM passport_events WHERE workspace_id=? "
+                        "AND payload_json LIKE ? "
+                        "LIMIT 1",
+                        (workspace, pattern),
+                    ).fetchone()
+                )
+            if referenced:
+                raise APIError(
+                    409,
+                    "SOURCE_IN_USE",
+                    "This file supports saved work or history. "
+                    "Remove only unused uploads; original invoice files can be deleted separately.",
+                )
+            # Preserve retry identities before deleting this unused source and its parser children.
+            operations = con.execute(
+                "SELECT * FROM import_operations WHERE workspace_id=? AND import_id=?",
+                (workspace, identifier),
+            ).fetchall()
+            for operation in operations:
+                con.execute(
+                    "INSERT INTO workflow_operations VALUES(?,?,?,?,?,?)",
+                    (
+                        workspace,
+                        operation["actor_id"],
+                        "removed-import-operation/" + operation["route"],
+                        operation["key"],
+                        operation["request_hash"],
+                        encode({"id": identifier, "removed": True}),
+                    ),
+                )
+            audit = {"id": identifier, "sha256": row["file_sha256"], "version": row["version"]}
+            con.execute(
+                "INSERT INTO product_events VALUES(?,?,?,?,?,?,?)",
+                (
+                    str(uuid4()),
+                    workspace,
+                    identity.user_id,
+                    "UNUSED_SOURCE_REMOVED",
+                    digest(audit),
+                    encode(audit),
+                    int(time.time()),
+                ),
+            )
+            for table in ("import_rows", "jobs", "import_operations", "import_events"):
+                con.execute(
+                    f"DELETE FROM {table} WHERE workspace_id=? AND import_id=?",
+                    (workspace, identifier),
+                )
+            con.execute(
+                "DELETE FROM imports WHERE workspace_id=? AND id=?", (workspace, identifier)
+            )
+            if not con.execute(
+                "SELECT 1 FROM imports WHERE workspace_id=? AND file_id=?",
+                (workspace, row["file_id"]),
+            ).fetchone():
+                con.execute(
+                    "DELETE FROM import_files WHERE workspace_id=? AND id=?",
+                    (workspace, row["file_id"]),
+                )
+            result = {"id": identifier, "removed": True}
+            con.execute(
+                "INSERT INTO workflow_operations VALUES(?,?,?,?,?,?)",
+                (workspace, identity.user_id, route, key, fingerprint, encode(result)),
+            )
+            return result
 
     def detail_row(self, connection, row):
         result = dict(row)
@@ -142,6 +268,17 @@ class ImportService:
             return dict(row)
 
     def operation(self, connection, identity, workspace, route, key, request_hash):
+        removed = connection.execute(
+            "SELECT request_hash FROM workflow_operations WHERE workspace_id=? AND actor_id=? "
+            "AND route=? AND key=?",
+            (workspace, identity.user_id, "removed-import-operation/" + route, key),
+        ).fetchone()
+        if removed:
+            if removed["request_hash"] != request_hash:
+                raise APIError(409, "IDEMPOTENCY_CONFLICT", "This request key was used previously.")
+            raise APIError(
+                410, "SOURCE_REMOVED", "This upload was removed. Use a new upload request."
+            )
         row = connection.execute(
             "SELECT * FROM import_operations WHERE workspace_id=? AND "
             "actor_id=? AND route=? AND key=?",
@@ -300,6 +437,7 @@ class ImportService:
         self.store.capacity(len(content) + 131072)
         with self.store.transaction() as connection:
             self.access.require_membership(connection, identity, workspace, roles=WRITE_ROLES)
+            require_role(self.access, connection, identity, workspace, {"CA", "ACCOUNTS"})
             registration = connection.execute(
                 "SELECT id FROM registrations WHERE workspace_id=? AND id=?",
                 (workspace, metadata["registration_id"]),
@@ -364,10 +502,16 @@ class ImportService:
                 field: row[field]
                 for field in ("registration_id", "kind", "period", "adapter_version")
             }
-            if row["adapter_version"] == "canonical-demo-v1" and (
-                payload["mapping"] or payload["sheet_name"] is not None
-            ):
-                raise APIError(422, "MAPPING_INVALID", "Demo JSON uses fixed canonical fields.")
+            if row["adapter_version"] in {
+                "canonical-demo-v1",
+                "gst-2b-json-v1",
+                "five-column-v1",
+            } and (payload["mapping"] or payload["sheet_name"] is not None):
+                raise APIError(
+                    422,
+                    "MAPPING_INVALID",
+                    "This format uses fixed fields; upload a corrected source instead.",
+                )
             if row["adapter_version"] != "xlsx-v1" and payload["sheet_name"] is not None:
                 raise APIError(422, "SHEET_INVALID", "Only XLSX supports sheet selection.")
             metadata.update(

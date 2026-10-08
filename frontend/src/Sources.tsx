@@ -60,6 +60,30 @@ function ImportDetail({
           <div className="controls">
             <Badge value={item.state} />
             <Badge value={item.provenance} />
+            {["CA", "ACCOUNTS"].includes(c.staffRole || "CA") &&
+              !["RECEIVED", "PARSING"].includes(item.state) && (
+                <button
+                  className="secondary"
+                  disabled={action.busy}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Delete this unused upload and its file? Files supporting saved work will be kept.",
+                      )
+                    )
+                      void action.run(
+                        () =>
+                          c.api.command(path(c, `imports/${id}/remove`), {
+                            expected_version: item.version,
+                          }),
+                        () => changed(""),
+                        "Unused upload removed.",
+                      );
+                  }}
+                >
+                  Delete unused upload
+                </button>
+              )}
             <button className="secondary" onClick={detail.reload}>
               Refresh source
             </button>
@@ -85,7 +109,8 @@ function ImportDetail({
           )}
 
           {writable(c) &&
-            ["AWAITING_CONFIRMATION", "FAILED"].includes(item.state) && (
+            ["AWAITING_CONFIRMATION", "FAILED"].includes(item.state) &&
+            ["csv-v1", "xlsx-v1"].includes(item.adapter_version) && (
               <details>
                 <summary>
                   Map exported columns or select a workbook sheet
@@ -135,7 +160,7 @@ function ImportDetail({
                       </label>
                     ))}
                     {item.adapter_version === "xlsx-v1" && (
-                      <Field name="sheet" value={item.sheet_name || ""}>
+                      <Field name="sheet" maxLength={128}>
                         Workbook sheet
                       </Field>
                     )}
@@ -273,6 +298,7 @@ function ImportDetail({
 export default function Sources({ c }: { c: Context }) {
   const [cursor, setCursor] = useState("");
   const [selected, setSelected] = useState("");
+  const [adapter, setAdapter] = useState("");
   const action = useCommand();
 
   const list = useResource<Schemas["ImportListData"]>(
@@ -290,8 +316,8 @@ export default function Sources({ c }: { c: Context }) {
         evidence arrives; history stays recorded.
       </p>
       <Notice>
-        Supported: CSV, XLSX and synthetic canonical JSON. Official government
-        fetching is unavailable.
+        Supported: CSV, XLSX, a five-column purchase register and supported B2B
+        records from your downloaded GSTR-2B JSON. You provide the files.
       </Notice>
       {writable(c) && (
         <details open>
@@ -316,7 +342,7 @@ export default function Sources({ c }: { c: Context }) {
                 kind: String(v.get("kind")),
                 registration_id: c.registration.id,
                 period: c.period,
-                adapter_version: String(v.get("adapter")),
+                adapter_version: String(v.get("adapter") || ""),
                 sheet_name: String(v.get("sheet") || ""),
                 supersedes_import_id: String(v.get("supersedes") || ""),
               };
@@ -326,6 +352,37 @@ export default function Sources({ c }: { c: Context }) {
                 if (val) data.set(key, val);
               void action.run(
                 async () => {
+                  if (!metadata.adapter_version) {
+                    const extension = file.name.toLowerCase().split(".").pop();
+                    metadata.adapter_version =
+                      extension === "xlsx"
+                        ? "xlsx-v1"
+                        : extension === "json"
+                          ? "gst-2b-json-v1"
+                          : "csv-v1";
+                    if (extension === "json") metadata.kind = "PORTAL_2B";
+                    if (extension === "csv" && metadata.kind === "PURCHASE") {
+                      const header = (await file.slice(0, 2048).text())
+                        .split(/\r?\n/)[0]
+                        .split(",")
+                        .map((v) =>
+                          v.replace(/^"|"$/g, "").trim().toLowerCase(),
+                        );
+                      if (
+                        header.length === 5 &&
+                        [
+                          "gstin",
+                          "invoice number",
+                          "date",
+                          "taxable value",
+                          "tax",
+                        ].every((name) => header.includes(name))
+                      )
+                        metadata.adapter_version = "five-column-v1";
+                    }
+                    data.set("adapter_version", metadata.adapter_version);
+                    data.set("kind", metadata.kind);
+                  }
                   const hash = [
                     ...new Uint8Array(
                       await crypto.subtle.digest(
@@ -346,6 +403,7 @@ export default function Sources({ c }: { c: Context }) {
                   setSelected(result.id);
                   list.reload();
                   form.reset();
+                  setAdapter("");
                 },
               );
             }}
@@ -359,16 +417,6 @@ export default function Sources({ c }: { c: Context }) {
                 </select>
               </label>
               <label>
-                File format
-                <select name="adapter">
-                  <option value="csv-v1">CSV</option>
-                  <option value="xlsx-v1">XLSX</option>
-                  <option value="canonical-demo-v1">
-                    Synthetic canonical JSON (2B only)
-                  </option>
-                </select>
-              </label>
-              <label>
                 Source file
                 <input
                   name="file"
@@ -377,25 +425,51 @@ export default function Sources({ c }: { c: Context }) {
                   required
                 />
               </label>
-              <Field name="sheet" maxLength={128}>
-                Workbook sheet (optional)
-              </Field>
-              <label>
-                Replace earlier snapshot (optional)
-                <select name="supersedes">
-                  <option value="">Keep as a separate source</option>
-                  {list.data?.imports
-                    .filter(
-                      (i) => i.kind === "PORTAL_2B" && i.state === "READY",
-                    )
-                    .map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.id.slice(0, 8)} · {i.period}
-                      </option>
-                    ))}
-                </select>
-              </label>
             </div>
+            <details>
+              <summary>Advanced export settings, only if needed</summary>
+              <div className="grid">
+                <label>
+                  File format override
+                  <select
+                    name="adapter"
+                    value={adapter}
+                    onChange={(e) => setAdapter(e.target.value)}
+                  >
+                    <option value="">Detect from the file</option>
+                    <option value="csv-v1">CSV</option>
+                    <option value="xlsx-v1">XLSX</option>
+                    <option value="five-column-v1">
+                      Five-column purchase CSV
+                    </option>
+                    <option value="gst-2b-json-v1">
+                      Downloaded GSTR-2B JSON
+                    </option>
+                    <option value="canonical-demo-v1">
+                      Synthetic sample JSON
+                    </option>
+                  </select>
+                </label>{" "}
+                <Field name="sheet" maxLength={128}>
+                  Workbook sheet (optional)
+                </Field>
+                <label>
+                  Replace earlier snapshot (optional)
+                  <select name="supersedes">
+                    <option value="">Keep as a separate source</option>
+                    {list.data?.imports
+                      .filter(
+                        (i) => i.kind === "PORTAL_2B" && i.state === "READY",
+                      )
+                      .map((i) => (
+                        <option key={i.id} value={i.id}>
+                          {i.id.slice(0, 8)} · {i.period}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+              </div>
+            </details>
             <button disabled={action.busy}>
               {action.busy ? "Receiving source…" : "Upload source"}
             </button>
@@ -478,7 +552,7 @@ export default function Sources({ c }: { c: Context }) {
           id={selected}
           changed={(id) => {
             list.reload();
-            if (id) setSelected(id);
+            if (id !== undefined) setSelected(id);
           }}
         />
       )}

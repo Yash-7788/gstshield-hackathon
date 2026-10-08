@@ -9,6 +9,7 @@ from app.domain.imports import MONEY_FIELDS
 from app.domain.reconciliation import amount_comparison, summarize
 from app.domain.reconciliation import identity as row_identity
 from app.errors import APIError
+from app.security.roles import require_role
 from app.services.imports import WRITE_ROLES, digest, encode
 
 
@@ -136,6 +137,13 @@ class RunService:
     def create(self, identity, workspace, payload, key, request_id, *, automatic=False):
         with self.store.transaction() as connection:
             self.authorize(connection, identity, workspace, mutation=True)
+            require_role(
+                self.access,
+                connection,
+                identity,
+                workspace,
+                {"CA", "CFO", "ACCOUNTS", "WAREHOUSE", "FOLLOWUP"} if automatic else {"CA"},
+            )
             existing = self.operation(connection, identity, workspace, "runs", key, payload)
             if existing is not None:
                 return existing

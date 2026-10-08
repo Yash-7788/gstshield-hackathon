@@ -28,6 +28,9 @@ backend/benchmarks/results/*.log
 
 # Private synthetic browser-performance screenshots.
 frontend/benchmarks/screenshots/
-
 # Local runtime logs and temporary verification artifacts.
 /tmp/
+
+# Local runtime and review artifacts.
+/output/verification/
+/test-results/

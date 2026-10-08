@@ -347,7 +347,7 @@ def pdf_bytes(snapshot, max_pages):
         topMargin=16 * mm,
         bottomMargin=18 * mm,
         title="GSTShield review snapshot",
-        author="GSTShield local demo",
+        author="GSTShield",
     )
 
     def page(canvas, doc):

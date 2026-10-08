@@ -8,6 +8,7 @@ import time
 
 from app.adapters.reports import generator_manifest
 from app.errors import APIError
+from app.security.roles import require_role
 from app.services.imports import digest, encode
 from app.services.workflows import WorkflowService
 
@@ -214,9 +215,9 @@ class ReportService(WorkflowService):
                 and self.runs.sources_current(connection, run)
             )
         if row["case_id"]:
-            return (
-                self.scoped(connection, "cases", ws, row["case_id"])["version"]
-                == snapshot["source_version"]
+            case = self.scoped(connection, "cases", ws, row["case_id"])
+            return case["version"] == snapshot["source_version"] and self.cases.sources_current(
+                connection, case
             )
         if row["proposal_id"]:
             proposal = self.scoped(connection, "proposals", ws, row["proposal_id"])
@@ -289,6 +290,7 @@ class ReportService(WorkflowService):
             self.actions.readable_refresh(identity, workspace)
         with self.store.transaction() as connection:
             self.authorize(connection, identity, workspace, mutation=True)
+            require_role(self.access, connection, identity, workspace, {"CA", "CFO"})
             cached = self.operation(connection, identity, workspace, "artifacts", key, payload)
             if cached is not None:
                 return cached

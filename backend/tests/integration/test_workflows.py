@@ -345,6 +345,7 @@ def test_expiry_cleanup_preserves_sources_and_owner_role(account):
             get(client, workspace, f"artifacts/{report['id']}").json()["data"]["state"] == "EXPIRED"
         )
         assert get(client, workspace, f"artifacts/{report['id']}/download").status_code == 410
+        state.access.grant("alice", workspace, "OWNER")
         response = post(client, workspace, "artifacts/cleanup", headers, {})
         assert response.status_code == 200 and response.json()["data"]["expired_artifacts"] == 1
         with state.store.transaction() as conn:

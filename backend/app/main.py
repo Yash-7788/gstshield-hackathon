@@ -13,8 +13,10 @@ from starlette.types import ASGIApp
 
 from app.api.access import router
 from app.api.actions import router as action_router
+from app.api.command_center import router as command_center_router
 from app.api.imports import router as import_router
 from app.api.passports import router as passport_router
+from app.api.product import router as product_router
 from app.api.runs import router as run_router
 from app.api.whatsapp import router as whatsapp_router
 from app.api.workflows import router as workflow_router
@@ -27,10 +29,13 @@ from app.jobs.whatsapp import WhatsAppWorker
 from app.security.http import LocalHTTPBoundary
 from app.services.access import AccessService
 from app.services.actions import ActionService
+from app.services.business import BusinessService
 from app.services.cases import CaseService
 from app.services.imports import ImportService
 from app.services.passport_channels import PassportChannels
 from app.services.passports import PassportService
+from app.services.processes import ProcessService
+from app.services.product_guidance import ProductGuidance
 from app.services.proposals import ProposalService
 from app.services.reports import ReportService
 from app.services.runs import RunService
@@ -59,6 +64,9 @@ def create_app(settings: Settings | None = None) -> ASGIApp:
             application.state.cases = CaseService(application.state.runs)
             application.state.passports = PassportService(application.state.runs)
             application.state.passports.cases = application.state.cases
+            application.state.business = BusinessService(application.state.passports)
+            application.state.product_guidance = ProductGuidance(application.state.business)
+            application.state.processes = ProcessService(application.state.product_guidance)
             application.state.actions = ActionService(
                 application.state.runs, application.state.cases
             )
@@ -74,7 +82,9 @@ def create_app(settings: Settings | None = None) -> ASGIApp:
             application.state.reports.actions = application.state.actions
             dispatcher.start()
             application.state.dispatcher = dispatcher
-            monitor = ActionMonitor(application.state.actions, application.state.passports)
+            monitor = ActionMonitor(
+                application.state.actions, application.state.passports, application.state.processes
+            )
             application.state.action_monitor = monitor
             application.state.whatsapp = WhatsAppService(
                 application.state.access,
@@ -130,6 +140,8 @@ def create_app(settings: Settings | None = None) -> ASGIApp:
     application.include_router(import_router)
     application.include_router(run_router)
     application.include_router(passport_router)
+    application.include_router(command_center_router)
+    application.include_router(product_router)
     application.include_router(workflow_router)
     application.include_router(action_router)
     application.include_router(whatsapp_router)

@@ -514,3 +514,168 @@ button.danger {
 .item-row strong {
   grid-column: 1 / -1;
 }
+
+.guided-help {
+  border: 1px solid #d8c6a2;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 12px 0;
+  background: #fffaf0;
+}
+.guided-help summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.guided-steps {
+  display: grid;
+  gap: 12px;
+  padding-left: 24px;
+}
+.guided-steps p {
+  margin: 4px 0;
+}
+
+/* Typography refinement: keep the existing workspace layout and controls. */
+body {
+  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  background: #faf7f0;
+  color: #28251f;
+  line-height: 1.65;
+}
+h1,
+h2 {
+  font-family: Fraunces, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+h1 {
+  font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+  margin-bottom: 0.55rem;
+}
+h2 {
+  font-size: 1.35rem;
+}
+h3 {
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.section-intro {
+  color: #5e6861;
+  max-width: 65ch;
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+}
+.login h1 {
+  font-size: 2.1rem;
+  margin-top: 0.65rem;
+}
+.login > p {
+  line-height: 1.65;
+}
+.context {
+  background: #eee9df;
+}
+.layout nav a[aria-current] {
+  background: #0b625b;
+}
+button {
+  background: #0b625b;
+  border-color: #0b625b;
+  font-weight: 600;
+}
+button.secondary {
+  color: #0b625b;
+  background: white;
+}
+a {
+  color: #0b625b;
+}
+.eyebrow {
+  color: #0b625b;
+}
+
+/* Owner/team additions reuse the existing workspace palette and type. */
+.portal-choice {
+  display: flex;
+  gap: 0.75rem;
+  margin-block: 1.5rem;
+  flex-wrap: wrap;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.panel {
+  border: 1px solid var(--border, #b8c8c3);
+  padding: 1rem;
+  margin-block: 1rem;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.panel summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.process-workspace {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.4fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.process-nodes {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+.process-nodes li {
+  border-left: 4px solid #9daaa5;
+  padding-left: 0.7rem;
+}
+.process-nodes li[data-state="DONE"] {
+  border-color: #245d50;
+}
+.process-nodes li[data-state="BLOCKED"],
+.process-nodes li[data-state="STALE"] {
+  border-color: #ba5a30;
+}
+.process-nodes button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  text-align: left;
+  gap: 0.25rem;
+}
+.process-nodes small {
+  grid-column: 2;
+}
+.process-detail {
+  position: sticky;
+  top: 1rem;
+}
+fieldset label {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+fieldset input[type="checkbox"],
+label > input[type="checkbox"] {
+  width: auto;
+}
+@media (max-width: 760px) {
+  .form-grid,
+  .process-workspace {
+    grid-template-columns: 1fr;
+  }
+  .process-detail {
+    position: static;
+  }
+}

@@ -1,0 +1,89 @@
+# Role workspace design and acceptance
+
+## Starting gate
+Six pillar implementation and connected-flow acceptance completed before this task starts. Full backend: 399 passed, one Windows privilege skip, two legacy expectations fixed; eight targeted security/action tests passed. All 30 browser checks passed across the final full run and its corrected concurrent-review retry. Built preview/CSP: two passed. Final affected backend flows: 28 passed; monitor fairness, current-year Rule 37A review deadline, and AI revocation checks: seven passed. Actual local Chrome exploration covered 26 desktop/phone screens without page errors or horizontal page overflow. A deliberately rapid sweep reached the 60-read/minute limit; normal-use retry passed. No live provider claim is inferred. Database schema upgrade retained every original business row with a backup.
+
+## Design decision
+Preserve the final landing HTML, its rangoli and local Lenis. Workspace borrows cream paper, near-black ink, saffron, teal, serif headings and the ledger motif. Forms and tables use normal browser scrolling rather than pinned marketing animations. Add no UI library or provider. Keep financial unknowns, roles, source fingerprints, approvals, local demo labels and all existing tools.
+
+## Role journeys
+Owner: business overview, short invoice priorities, business/workforce input, tax-review drawer, shared process, schemes. CA: invoice intake and GST comparison, evidence and shared review. CFO: payment priorities, proposals and shared approval steps. CMA: supplied costs/profit and invoice facts. CMO: supplied marketing spend/sales, missing data and shared contributions. CEO: business summary and team context. COO: evidence and operational handoffs. CTO: application/integration facts with no fabricated firm infrastructure. Accounts, warehouse and supplier-follow-up have their own action links. Choosing a role never changes permissions.
+
+## Files and behavior
+Add workspace navigation configuration, RoleHome, and a dedicated workspace stylesheet. Update App: compact company/month/role controls, primary role links, More tools disclosure, context-aware section heading, readable login. Update OwnerWorkspace and Today: bounded priorities and lazy tax details. Update TeamWorkspace: role entry and account roster disclosure, shared notes. Update Assistants: scoped role layout and explanation. Update directories: fetch only when opened. Preserve all legacy deep links and invoice handoff. No new tables or routes.
+
+## Verification
+Build and client tests, complete browser regression and built CSP preview after UI edits. New role-navigation and real repeated-role/privacy checks; desktop 1440, laptop 1280, phone 390 and 320, reduced motion, keyboard focus and screenshots. Verify no page clipping or overlaps, no background requests from closed directories, no private data from a previous account/context, and no unrelated page scroll on polling. Save exact outcomes and limits. No push requested.
+
+
+## Owner clarification: distinct interfaces, 7 October
+Keep the global ledger DNA but do not repeat the landing's same four colours or same dashboard layout for every role. CA uses blue ink and a four-record strip; CFO uses verdigris and a dark payment briefing; CMA uses plum ink and a ruled cost sheet; CMO uses terracotta and an asymmetric spend/sales brief; CTO uses slate and a systems register; COO uses olive handoff lanes; CEO uses a business memo. Accounts, warehouse and follow-up have separate ink/paper pairs. Owner retains the closest landing palette. Every workspace page follows the selected role's palette, not only its hero. No fabricated metrics, charts or approval flags are used for decorative effect.
+
+
+### Usability findings
+The first full UI regression passed 26 cases. Three remaining checks expected the old read-only sentence; it now distinguishes financial reads from permitted shared-work actions. Creating a teammate needed the roster to open automatically. The new role test needed to select its owner workspace instead of the fixture's first viewer workspace. These are being corrected and rechecked. Owner overview now places the business ledger and bounded priorities in different columns. Process JSON includes per-current-user can_update/can_assign and assignment_roles, derived from the same existing server rules; UI hides forbidden transitions and ineligible assignees. There are no new routes or tables, and the server continues to recheck every write. No feature or money decision was changed by the visual redesign.
+
+
+### Final role-UI rechecks
+Derived assignment/update permissions passed the eight-test process/access recheck, including two CAs seeing the same step with different update rights. The corrected roster and two read-only/privacy browser checks pass. Remaining test-harness corrections: use accessible combobox locators for role/workspace fields, and seed the context-switch test's own missing invoice rather than relying on an earlier test. The screenshot showed the picker existed and correctly limited a viewer to Observer; this was not missing UI or a permission defect. The main visual design, owner layout and separate role palettes are implemented. Final role and context browser retry plus built preview and actual visual review remain.
+
+
+## Final local acceptance and role UI, 7 October 2026
+
+The six pillars and subsequent role-workspace UI are complete for the local hackathon scope. This dated entry supersedes earlier in-progress notes. The integrated landing is /landing.html; the workspace is /. No commit or push was performed.
+
+The owner sees business figures, private workforce input and short invoice priorities. CA sees invoice/evidence and reconciliation first. CFO sees payment priorities and a financial brief. CMA has a ruled cost sheet; CMO has reported marketing spend and attributed sales; CEO has a business memo; COO has evidence handoffs; CTO has an honest application/integration register. Accounts, warehouse and follow-up have dedicated entry actions. Palettes vary by role while sharing serif titles, readable controls and ledger lines. The role picker only exposes approved roles; it does not grant authority. Owners previewing a role retain their owner permissions, whereas actual team accounts use their own server-enforced permissions.
+
+Closed tax and scheme drawers do not fetch their data. Secondary tools sit under More tools. Account/company/month/role changes reset invoice focus and invalidate previous context. Node update and assignment controls follow permissions returned by the server, which rechecks every write. Relevant changed evidence reopens downstream work and invalidates old decisions.
+
+### Exact verification record
+
+- Complete backend run: 399 passed, one Windows privilege skip, two legacy expectations failed. Both were corrected and passed an eight-test security/action recheck. A second entire backend run was not repeated.
+- Final affected backend regression: 28 passed. Additional monitor fairness, deadline and post-AI authority checks: seven passed. Final process/access recheck after UI permission projection: eight passed. These are separate suites, not additive unique-test counts.
+- UI browser run: 26 of 31 passed initially. Corrected targeted retries passed all five remaining cases. All 31 cases therefore have passing evidence across the full run and retries, rather than one fresh full green run.
+- Client tests: 11 passed. API contract alignment: 132 checked. TypeScript, production build and Ruff passed.
+- Final built-preview and browser content-security tests: two passed.
+- Actual local Chrome sweep: 30 role/viewport combinations at 1440, 390 and 320 pixels, zero page errors, zero horizontal overflow and zero alerts. See output/verification/final-role-visual.json. Owner and Invoice desk were also captured. Representative owner, CA, CFO, CMA, CMO, CEO, COO and CTO screenshots were visually inspected, including phone CFO/CMO; no clipping or overlapping controls was found in those inspected captures.
+- Schema 8 upgrade preserved all 46 original business tables and 24 original rows against the backup. Integrity and foreign keys passed. Afterwards explicitly fictional demo profiles, accounts and a process were added through authenticated routes.
+
+### Limits retained
+
+Local PC storage; simulated bank and GST fetching; no GST portal submission, real escrow or actual bank hold. IMS actions remain NOT_SUBMITTED and notices remain DRAFT_FOR_REVIEW. WhatsApp/email need configured authorized providers; local tests do not prove live delivery. AI integration is configured separately; no fresh live-provider test was made during this final UI run. AI extracts/explains/drafts, and deterministic rules decide matches and payment recommendations. Legal suggestions require CA confirmation. Completion is internal review, not filing, paid money or recovered credit. Unsupported competitor assertions remain OWNER_TO_FILL. Unknown evidence and amounts stay unknown.
+
+### Session narrative
+
+The work first completed the six pillar engines and entry integration, then verified owner privacy, duplicate-role collaboration, reconciliation, evidence-driven payment and ten-node completion/staleness. Full regression found outdated source-replacement and route-inventory expectations, which were corrected with focused security checks. Cross-system review also fixed provider permission ordering, authorization after optional AI, changing deadline fingerprints and monitor fairness beyond 50 records. Original SQLite business rows were compared with the offline backup before the local demo was populated. Only after that acceptance gate did workspace design begin. Role navigation was reduced to primary tasks with supporting tools disclosed separately; closed drawers and duplicate portal requests were removed. Distinct role layouts and palettes were then verified through browser regression, isolated fixture corrections, built CSP preview and actual local Chrome screenshots. The final screenshots show readable mobile/desktop layouts and no measured overflow; the final guide provides fictional demo logins and honest workflow boundaries. No push occurred and no live bank, government or channel approval was fabricated. Infigraph session tools are unavailable, so this dated narrative is the continuity record.
+
+
+## Owner rejection and corrective design, 7 October
+
+The owner rejected the pale white-frame/sidebar workspace as generic and insufficiently similar to the supplied landing. Functional acceptance remains valid, but the prior visual acceptance does not constitute owner approval. Replace the shell rather than merely tinting it: strong role-coloured floral-pattern canvas, horizontal book tabs with a tools index, no left sidebar or enclosing white Team desk box, short role headlines and illustrated ledger covers. Keep the approved-role and evidence behavior, original landing visuals, responsive native controls and accessible navigation. Use per-role saturated palettes under the same book/pattern DNA; plain input/table paper is for reading records, not the entire app frame. Files: App.tsx, RoleHome.tsx, TeamWorkspace.tsx, workspace.ts, workspace.css, LedgerFlower.tsx. No new routes, data or providers. Verify build, actual Chrome desktop/phone navigation, real accounts and focused layout/keyboard/browser checks.
+
+Narrative: after visual screenshots and handover documentation, the owner correctly identified that the workspace had lost the landing's character. The previous designer choice emphasized quiet surfaces too much. The corrective approach restores the dominant saturated background, flower geometry and book-cover motifs while removing duplicated heading/hero cards and the conventional sidebar. Money rules and server authority are unchanged. Infigraph tools remain unavailable; direct source-context reads were used.
+
+
+### Corrective UI implementation and visual finding
+
+The rejected pale frame/sidebar has been replaced in source, not retained beneath a new colour tint. Navigation is a horizontal book-tab rail and a two-column tools index. The index closes on page/role change and Escape. Main content sits directly on a saturated floral-pattern canvas. CA uses indigo/red/gold; CFO deep green/gold; CMO terracotta/mustard; CMA burgundy/copper; CTO deep blue/pale aqua; COO olive/citrus; CEO walnut/russet; owner marigold/red. Role tasks and saved figures remain distinct. Short headlines replace the previous long presentation-style headings. A drawn flower/ledger cover comes from the landing's geometry and book treatment. Shared notes use a compose sheet beside the history rather than a full-width form wall. The original landing is unchanged.
+
+The real owner/CA preview was opened in the available in-app browser. Desktop and 390px full-page captures visibly show the new colour/pattern/book layout and no old sidebar or outer white Team desk box. An early tools-index auto-open inherited from the previous sidebar layout was fixed; it now starts closed and closes when choosing a tool. Owner active-tab contrast was also corrected. Eleven client checks, TypeScript and production build passed. The three focused role/privacy/keyboard/phone browser cases are running against an isolated database. Full backend is not being repeated for a frontend-only correction. No new dependencies or backend writes were added by this redesign.
+
+Session narrative: the owner clarified that the palette was missing, because the previous implementation used pale surfaces. Source inspection confirmed that workspace.css overrode the original frontend DNA with a white paper container and conventional vertical navigation. The correction removes those structural choices and uses the exact family of repeated circle/diamond geometry from landing.css as a static background, large serif headings, gold-tipped actions and an illustrated bound ledger. Records retain contrasting paper for readability. The shared-work form and history were also split into an actual working composition. Native controls, context cancellation, server permissions and legacy page links remain. A manual mobile sweep and focused regression check follow the build; no production-readiness or live-provider claim is inferred.
+
+
+### Navigation accessibility finding
+The decorative CSS arrow on tools-index links was included in their accessible names, so exact named navigation (and assistive technology) saw an altered label. Moved the arrow into an aria-hidden span, retaining the design while restoring the actual tool names. This explains the focused check waiting on a link; the backend and records were unaffected. Recheck is required before completion.
+
+
+The focused run also exposed a controlled native-details toggle failing under the interrupted/frozen-clock navigation fixture. The tools index now uses an explicit accessible button (aria-expanded/aria-controls) and conditionally mounted links, avoiding native asynchronous toggle timing. Decorative symbols are aria-hidden. The same shared navigation assertions are retained; link waits are bounded to 15 seconds so a missing route fails promptly. First focused run: one passing, two failing before this correction; all three are being rechecked.
+
+
+### Corrective UI acceptance completed
+
+The final fresh focused browser run passed all three cases in 59.3 seconds: landing/owner entry and actual two-CA shared-work/private-salary checks; approved role desks, closed-panel request behavior and desktop/phone layout; mobile internally scrolling tables and keyboard access to the main heading. The first corrective run had one pass and two failures; both tools-index failures were fixed with aria-hidden decorative arrows and an explicit state-driven menu button, then all three passed together. Eleven client checks, TypeScript, production build and formatting pass. Backend readiness and the restored website both return 200. The available in-app browser now shows the corrected local CA workspace; Chrome automation is unavailable through the installed browser connector, while the isolated browser tests did use installed Chrome. No push was performed.
+
+Saved passing-run layout captures are output/verification/corrected-ca-1440.png, corrected-ca-1280.png, corrected-ca-390.png, corrected-ca-320.png and corrected-cmo-desktop.png. They use fictional isolated test records. CA desktop and 320px captures were visually checked for the removed sidebar, short headline, readable record areas, internal tab scrolling and no page overflow. The CMO full-page screenshot includes the sticky header at the prior scroll position, a capture artifact rather than a second header in the page. The live preview remains available at http://localhost:3000/#Team%20desk.
+
+The previous backend and full browser acceptance record remains a separate baseline; no entire backend/full-browser rerun is claimed for this visual-only correction. The same application flows and server permissions remain, with the legal/provider limits documented above. No new package or provider was introduced.
+
+Narrative milestone: the user's palette and design criticism resulted in an actual shell replacement. Strong colours and the landing's radial circle/diamond pattern now cover the workspace, and horizontal book tabs replace the old vertical nav. Decorative arrows initially changed link names and controlled native details introduced toggle timing trouble in the frozen-clock fixture. Both were corrected rather than weakening assertions. The fresh three-case run verifies real owner/team interactions, role-specific visibility, unrequested-read avoidance, phone layout and keyboard focus. The website was restored after isolated testing and checked ready; the work is saved locally, with no commit/push or fabricated live integration.

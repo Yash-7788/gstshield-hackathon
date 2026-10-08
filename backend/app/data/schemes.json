@@ -1,0 +1,31 @@
+{
+  "checked_on": "2026-10-07",
+  "schemes": [
+    {
+      "id": "mudra",
+      "name": "Pradhan Mantri MUDRA Yojana",
+      "purpose": "Term-loan and working-capital credit for eligible micro enterprises.",
+      "source": "https://financialservices.gov.in/pradhan-mantri-mudra-yojana-pmmy",
+      "conditions": [
+        "Eligible micro-enterprise activity",
+        "Lender appraisal and sanction",
+        "Tarun Plus requires a successfully repaid earlier Tarun loan"
+      ],
+      "interest": "Lender-dependent. No guaranteed low interest rate.",
+      "limit": "Shishu up to ₹50,000; Kishore up to ₹5 lakh; Tarun up to ₹10 lakh; Tarun Plus up to ₹20 lakh subject to prior repayment."
+    },
+    {
+      "id": "cgtmse",
+      "name": "CGTMSE credit guarantee",
+      "purpose": "Ask an eligible lender about guarantee-backed credit for a micro or small enterprise.",
+      "source": "https://www.cgtmse.in/",
+      "conditions": [
+        "Micro/small enterprise eligibility",
+        "Participating lender appraisal",
+        "The lender applies for the guarantee"
+      ],
+      "interest": "Lender-dependent. This is not a direct loan or subsidy.",
+      "limit": "Check the current guarantee scheme and lender terms."
+    }
+  ]
+}

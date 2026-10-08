@@ -756,14 +756,29 @@ def test_different_purchase_source_never_autolinks_reused_invoice_and_stale_acti
             client, workspace, create(client, workspace, headers, payload).json()["data"]["id"]
         )
         old = action(client, workspace, "INVOICE_REVIEW")
-        second = prepare(
+        purchase = source(
             client,
             workspace,
             registration,
             headers,
-            purchases=[ROW | {"invoice_date": "2024-05-02"}],
-            portals=[ROW | {"invoice_number": "OTHER-998"}],
+            [ROW | {"invoice_date": "2024-05-02"}],
+            "PURCHASE",
         )
+        portal = source(
+            client,
+            workspace,
+            registration,
+            headers,
+            [ROW | {"invoice_number": "OTHER-998"}],
+            "PORTAL_2B",
+            supersedes_import_id=payload["portal_import_id"],
+        )
+        second = {
+            "registration_id": registration,
+            "period": "2024-05",
+            "purchase_import_id": purchase["id"],
+            "portal_import_id": portal["id"],
+        }
         finished(client, workspace, create(client, workspace, headers, second).json()["data"]["id"])
         rows = queue(client, workspace)["actions"]
         assert len(rows) == 2 and len({r["document_id"] for r in rows}) == 2

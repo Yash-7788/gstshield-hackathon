@@ -244,8 +244,43 @@ export class ApiClient {
     );
   }
 
-  upload<T>(path: string, form: FormData, signature: string) {
-    return this.write<T>(path, form, signature, "POST");
+  async upload<T>(path: string, form: FormData, signature: string) {
+    const epoch = this.epoch;
+    const snapshot = new FormData();
+    const identity: string[][] = [];
+    for (const [name, value] of form.entries()) {
+      if (typeof value === "string") {
+        snapshot.append(name, value);
+        identity.push([name, value]);
+      } else {
+        const limit = path.includes("/passports/")
+          ? 4 * 1024 * 1024
+          : 5 * 1024 * 1024;
+        if (!value.size || value.size > limit)
+          throw new ApiError(
+            `Choose a nonempty file up to ${limit / 1024 / 1024} MB.`,
+            413,
+            "FILE_SIZE",
+          );
+        snapshot.append(name, value, value.name);
+        const digest = await crypto.subtle.digest(
+          "SHA-256",
+          await value.arrayBuffer(),
+        );
+        const hash = Array.from(new Uint8Array(digest), (b) =>
+          b.toString(16).padStart(2, "0"),
+        ).join("");
+        identity.push([name, value.name, hash]);
+      }
+    }
+    if (epoch !== this.epoch)
+      throw new ApiError("Upload context changed.", 0, "OBSOLETE");
+    return this.write<T>(
+      path,
+      snapshot,
+      JSON.stringify([signature, identity]),
+      "POST",
+    );
   }
 
   private write<T>(

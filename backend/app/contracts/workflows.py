@@ -173,6 +173,8 @@ class CaseData(StrictModel):
     created_at: int
     updated_at: int
     missing_facts: list[str]
+    sources_current: bool
+    stored_state: CaseState
     irn_observation: Literal["NOT_PROVIDED", "FORMAT_ONLY", "FORMAT_INVALID"]
     timeline: list[dict]
 
