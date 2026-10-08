@@ -264,13 +264,13 @@ class LocalStore:
                         "INSERT INTO metadata VALUES ('schema',?)", (EXPECTED_DIGEST,)
                     )
             self.validate()
-        except (StorageError, OSError, sqlite3.Error):
+        except (StorageError, OSError, sqlite3.Error) as _exc:
             if created:
                 # Only this call's newly created file may be removed; never an existing DB.
                 self.path.unlink(missing_ok=True)
             raise StorageError(
                 "Cannot initialize storage; preserve existing files and use offline recovery."
-            ) from None
+            ) from _exc
 
     def upgrade(self) -> str | None:
         """Explicit offline v1 through v7 upgrade: validate and preserve before adding tables."""

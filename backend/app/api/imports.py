@@ -80,12 +80,24 @@ async def bounded_upload(request, settings):
     )
     # Keep the single bounded file in memory; never spool source data to shared temp storage.
     parser.spool_max_size = limit + 1
+    form = None
     try:
-        return await parser.parse()
+        form = await parser.parse()
+        return form
     except (MultiPartException, MultipartParseError, ValueError, UnicodeError):
-        # Also close buffers on malformed multipart input.
-        for file in parser._files_to_close_on_error:
-            file.close()
+        # Close any in-memory buffers that the parser may have opened before failing.
+        if form is not None:
+            await form.close()
+        else:
+            # The parser opens internal file objects before raising; attempt cleanup via
+            # the public API. Gracefully degrade if the internal structure changes.
+            for attr in ("_files", "_fields"):
+                for item in getattr(parser, attr, []):
+                    try:
+                        if hasattr(item, "close"):
+                            item.close()
+                    except Exception:
+                        pass
         raise APIError(
             400, "INVALID_MULTIPART", "Send one file with supported import fields."
         ) from None

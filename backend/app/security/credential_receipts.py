@@ -20,16 +20,17 @@ def upgrade_receipts(store, workspace):
             (workspace,),
         ).fetchall()
     changed = 0
-    for row in rows:
-        binding = credential_payload(
-            workspace, row["actor_id"], row["route"], row["key"], row["request_hash"]
-        )
-        new_route = (
-            "member-password-v2:" + row["route"].split(":", 1)[1]
-            if row["route"].startswith("member-password:")
-            else row["route"] + "-v2"
-        )
-        with store.transaction() as con:
+    # Batch all updates in a single transaction to avoid N capacity scans.
+    with store.transaction() as con:
+        for row in rows:
+            binding = credential_payload(
+                workspace, row["actor_id"], row["route"], row["key"], row["request_hash"]
+            )
+            new_route = (
+                "member-password-v2:" + row["route"].split(":", 1)[1]
+                if row["route"].startswith("member-password:")
+                else row["route"] + "-v2"
+            )
             changed += con.execute(
                 "UPDATE workflow_operations SET route=?,request_hash=? WHERE workspace_id=? "
                 "AND actor_id=? AND route=? AND key=? AND request_hash=?",

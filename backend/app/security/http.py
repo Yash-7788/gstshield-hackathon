@@ -86,7 +86,12 @@ class LocalHTTPBoundary:
                         host.hostname == self.channel_host
                         and (
                             scope.get("path") == "/webhooks/whatsapp"
-                            or re.fullmatch(r"/wa/reports/[A-Za-z0-9_-]{43}", scope.get("path", ""))
+                            or (
+                                scope["method"] == "GET"
+                                and re.fullmatch(
+                                    r"/wa/reports/[A-Za-z0-9_-]{43}", scope.get("path", "")
+                                )
+                            )
                         )
                     )
                 )

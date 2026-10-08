@@ -54,8 +54,11 @@ async def upload(request: Request, workspace_id: UUID):
     svc, ws = service(request), str(workspace_id)
     svc.imports.authorize(identity, ws, mutation=True)
     key = request_key(request)
-    form = await bounded_upload(request, svc.settings)
+    if not svc.imports.upload_slot.acquire(blocking=False):
+        raise APIError(503, "UPLOAD_BUSY", "An upload is already being received.", retry_after=1)
+    form = None
     try:
+        form = await bounded_upload(request, svc.settings)
         if (
             len(form.multi_items()) != 4
             or set(form.keys()) != {"file", "registration_id", "period", "consent"}
@@ -90,7 +93,9 @@ async def upload(request: Request, workspace_id: UUID):
         )
         return envelope(request, result)
     finally:
-        await form.close()
+        if form is not None:
+            await form.close()
+        svc.imports.upload_slot.release()
 
 
 @router.post("/intelligence", response_model=models.IntelligenceResponse)
@@ -282,11 +287,14 @@ def dossier(request: Request, workspace_id: UUID, passport_id: UUID):
         "Supplier delivery history": view["supplier_channel"],
     }
     for label, value in values.items():
+        # Strip < > before passing to ReportLab Paragraph — it interprets a subset of HTML tags.
+        safe_text = escape(label + ": " + str(value)).replace("&lt;", "(").replace("&gt;", ")")
         story.extend(
-            [Spacer(1, 8), Paragraph(escape(label + ": " + str(value)), styles["BodyText"])]
+            [Spacer(1, 8), Paragraph(safe_text, styles["BodyText"])]
         )
     for event in view["history"][-100:]:
-        story.extend([Spacer(1, 6), Paragraph(escape(str(event)), styles["BodyText"])])
+        safe_event = escape(str(event)).replace("&lt;", "(").replace("&gt;", ")")
+        story.extend([Spacer(1, 6), Paragraph(safe_event, styles["BodyText"])])
     SimpleDocTemplate(target).build(story)
     return Response(
         target.getvalue(),
@@ -352,15 +360,16 @@ def supplier_send(
     request: Request, workspace_id: UUID, passport_id: UUID, payload: models.SupplierSend
 ):
     svc = service(request)
+    identity = authenticated(request, mutation=True)
     svc.channel.send(
-        authenticated(request, mutation=True),
+        identity,
         str(workspace_id),
         str(passport_id),
         payload.model_dump(mode="json"),
         request_key(request),
     )
     return envelope(
-        request, svc.detail(authenticated(request), str(workspace_id), str(passport_id))
+        request, svc.detail(identity, str(workspace_id), str(passport_id))
     )
 
 
@@ -377,8 +386,11 @@ async def evidence_document(request: Request, workspace_id: UUID, passport_id: U
     svc, ws = service(request), str(workspace_id)
     svc.imports.authorize(identity, ws, mutation=True)
     key = request_key(request)
-    form = await bounded_upload(request, svc.settings)
+    if not svc.imports.upload_slot.acquire(blocking=False):
+        raise APIError(503, "UPLOAD_BUSY", "An upload is already being received.", retry_after=1)
+    form = None
     try:
+        form = await bounded_upload(request, svc.settings)
         if (
             len(form.multi_items()) != 3
             or set(form.keys()) != {"file", "kind", "consent"}
@@ -401,4 +413,6 @@ async def evidence_document(request: Request, workspace_id: UUID, passport_id: U
         )
         return envelope(request, result)
     finally:
-        await form.close()
+        if form is not None:
+            await form.close()
+        svc.imports.upload_slot.release()

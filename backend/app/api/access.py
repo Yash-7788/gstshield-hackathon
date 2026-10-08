@@ -87,8 +87,10 @@ def login(request: Request, payload: LoginRequest, response: Response) -> dict:
         != "application/json"
     ):
         raise APIError(415, "JSON_REQUIRED", "Send an application/json request.")
+    client_ip = request.client.host if request.client else None
     token, identity = service(request).login(
-        payload.username, payload.password.get_secret_value(), payload.portal
+        payload.username, payload.password.get_secret_value(), payload.portal,
+        client_ip=client_ip,
     )
     response.set_cookie(
         COOKIE,

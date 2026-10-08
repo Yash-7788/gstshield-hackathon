@@ -13,6 +13,8 @@ from app.contracts.workflows import CaseData, ProposalData
 Money = Annotated[str, Field(pattern=r"^[0-9]{1,14}(\.[0-9]{1,2})?$", max_length=17)]
 Quantity = Annotated[str, Field(pattern=r"^[0-9]{1,9}(\.[0-9]{1,4})?$", max_length=14)]
 Period = Annotated[str, Field(pattern=r"^[1-9][0-9]{3}-(0[1-9]|1[0-2])$")]
+BoundedStr = Annotated[str, Field(max_length=500)]
+QuoteKey = Annotated[str, Field(max_length=100)]
 
 
 class Input(BaseModel):
@@ -92,8 +94,8 @@ class ExtractedInvoice(Input):
     invoice_count: StrictInt | None = Field(default=None, ge=1, le=20)
     items: list[ExtractedLineItem] = Field(default_factory=list, max_length=100)
     supplier_bank_account: str | None = Field(default=None, max_length=64)
-    uncertainties: list[str] = Field(default_factory=list, max_length=20)
-    evidence_quotes: dict[str, str] = Field(default_factory=dict, max_length=20)
+    uncertainties: list[BoundedStr] = Field(default_factory=list, max_length=20)
+    evidence_quotes: dict[QuoteKey, BoundedStr] = Field(default_factory=dict, max_length=20)
 
 
 class PassportCreate(Input):
@@ -327,4 +329,4 @@ class ExtractedCommercial(Input):
     taxable_value: str | None = Field(default=None, max_length=32)
     quantity: str | None = Field(default=None, max_length=32)
     items: list[ExtractedLineItem] = Field(default_factory=list, max_length=100)
-    uncertainties: list[str] = Field(default_factory=list, max_length=20)
+    uncertainties: list[BoundedStr] = Field(default_factory=list, max_length=20)

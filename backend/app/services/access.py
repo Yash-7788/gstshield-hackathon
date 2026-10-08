@@ -60,8 +60,9 @@ def token_digest(token: str) -> str:
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
-def csrf_value(token: str) -> str:
-    return hmac.new(token.encode("ascii"), b"gstshield-csrf-v1", hashlib.sha256).hexdigest()
+def _csrf_value(token: str, secret: bytes) -> str:
+    """Keyed on a per-startup secret so CSRF token cannot be derived from the cookie alone."""
+    return hmac.new(secret, token.encode("ascii"), hashlib.sha256).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -88,6 +89,8 @@ class AccessService:
         self.settings = store.settings
         self.hash_slot = threading.BoundedSemaphore(1)
         self.clock = time.time
+        # Fresh random secret each startup; CSRF tokens are invalidated on server restart.
+        self._csrf_secret: bytes = secrets.token_bytes(32)
 
     def provision(self, username: str, password: str, workspace_name: str) -> tuple[str, str]:
         username = username_value(username)
@@ -209,8 +212,8 @@ class AccessService:
 
     def rate(self, connection, bucket: str, limit: int, seconds: int) -> None:
         now = int(self.clock())
-        # All current windows expire within 60 seconds. Bound retained operational rows.
-        connection.execute("DELETE FROM rate_windows WHERE start <= ?", (now - 60,))
+        # Prune rows that are older than the longest window in use to bound table growth.
+        connection.execute("DELETE FROM rate_windows WHERE start <= ?", (now - max(seconds, 60),))
         row = connection.execute(
             "SELECT start,count FROM rate_windows WHERE bucket=?", (bucket,)
         ).fetchone()
@@ -254,15 +257,20 @@ class AccessService:
         return allowed
 
     def login(
-        self, username: str, password: str, portal: str | None = None
+        self, username: str, password: str, portal: str | None = None,
+        client_ip: str | None = None,
     ) -> tuple[str, Identity]:
         username = username_value(username)
         password_value(password)
         with self.store.transaction() as connection:
             self.rate(connection, "login:global", 30, 60)
             self.rate(connection, "login:" + hashlib.sha256(username.encode()).hexdigest(), 5, 60)
+            if client_ip:
+                # Defense-in-depth: limit login attempts from any single loopback client.
+                self.rate(connection, "login:ip:" + client_ip, 15, 60)
             row = connection.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
-        if not self.hash_slot.acquire(blocking=False):
+        # Allow up to 8s of blocking so a concurrent scrypt doesn't 503 a legitimate user.
+        if not self.hash_slot.acquire(blocking=True, timeout=8):
             raise APIError(503, "AUTH_BUSY", "Sign-in is busy; retry shortly.", retry_after=1)
         try:
             salt = row["salt"] if row else b"gstshield-dummy!!"
@@ -314,7 +322,7 @@ class AccessService:
             row["username"],
             now + self.settings.session_ttl_seconds,
             token_digest(token),
-            csrf_value(token),
+            _csrf_value(token, self._csrf_secret),
             portal=portal,
         )
 
@@ -344,7 +352,8 @@ class AccessService:
                 raise APIError(
                     401,
                     "TEAM_REGISTRATION_REQUIRED",
-                    "Your team access is no longer active. Ask your owner to register or enable your account.",
+                    "Your team access is no longer active. "
+                    "Ask your owner to register or enable your account.",
                 )
             self.rate(
                 connection,
@@ -355,7 +364,8 @@ class AccessService:
                 60,
             )
         return Identity(
-            row["id"], row["username"], row["expires_at"], hashed, csrf_value(token), portal=portal
+            row["id"], row["username"], row["expires_at"], hashed,
+            _csrf_value(token, self._csrf_secret), portal=portal
         )
 
     def require_membership(self, connection, identity: Identity, workspace_id: str, *, roles=ROLES):

@@ -26,6 +26,11 @@ def test_lifespan_retains_exclusive_storage_until_both_background_threads_stop(m
         def __init__(self, *args):
             self.thread = self
             self.alive = False
+            self.name = "synthetic-" + self.kind
+
+        def join(self, timeout=None):
+            # Simulate a stuck real thread: joining cannot make it stop.
+            pass
 
         def start(self):
             self.alive = True

@@ -174,3 +174,10 @@ Codex Security accepted the final semantic draft and successfully validated/inde
 
 ### Publication checkpoint
 User authorized pushing the complete current codebase to the previously created new repository. Confirmed destination: Yash-7788/gstshield-hackathon, main; target checkout was clean. Publication scope includes application source, tests, plans and synthetic test documents. Local private database, backend .env, runtime logs, temporary screenshots and browser artifacts are excluded. Publication file scan found no configured-secret or recognizable provider-key matches. No heavy tests requested or run for this publication.
+
+### Publication verified
+Pushed main successfully to https://github.com/Yash-7788/gstshield-hackathon.git. Remote main verified at c40192c61e7ea925473525ea1858e243a41c5b86; publication checkout clean. Commit includes the complete current public source, tests, plans, synthetic testing documents and audit repairs. The final index scan covered 242 files and found no publication-secret/private-path matches. No heavy test suite was run. The new checkout C:\Users\yashk\Downloads\gstshield-hackathon is the clean baseline for Claude's second-round diff; the original working project and its local database remain in place.
+
+
+### Round-two corrective milestone
+User authorized repairing review regressions, publishing, starting both services and a full role walkthrough. Restored supported Gemini 3.1 model fallback; restored only GET shaped public report capabilities while keeping private routes blocked; imported sqlite3 for sanitized storage failure handling; fixed the line-length error. Updated shutdown test double to represent Thread.join/name. Twelve focused checks passed in 2.65s; backend source lint passed. No heavy suite or live provider calls. Initial harness lifespan mismatch was corrected before final passing run. Added matching fictional five-file test pack and role-by-role guide; no private database or credentials are published. Remaining work: sync/commit/push, restart/verify local services and present usage guide.

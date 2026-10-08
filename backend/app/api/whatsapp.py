@@ -142,10 +142,17 @@ def unlink(request: Request, workspace_id: UUID, payload: LinkRevoke):
 @router.get("/wa/reports/{token}", include_in_schema=False)
 def report(request: Request, token: str):
     content, filename = channel(request).download(token)
+    safe_filename = "".join(
+        c for c in filename if c not in {'"', "\\", "\r", "\n", "\x00"}
+    )
     return Response(
         content,
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{safe_filename}"',
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
     )
 
 

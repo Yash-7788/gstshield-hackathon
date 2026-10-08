@@ -1,5 +1,7 @@
 # GSTShield
 
+Start using the current application: [role-by-role walkthrough and connected test files](demo/START_HERE_ROLE_WALKTHROUGH.md).
+
 Latest usability/access correction (8 October 2026): one assigned role per teammate, owner oversight, progressive OCR invoice/proof review and monthly GST reuse. See [the simple role guide and input inventory](demo/ROLE_SIMPLIFIED_GUIDE.md) and [dated verification ledger](md/13_ROLE_AND_INPUT_SIMPLIFICATION.md). The older acceptance notes below describe earlier checkpoints.
 
 > Current local acceptance: six pillars are implemented and verified for the hackathon scope. The workspace now uses saturated floral canvases, book tabs and role-specific ledgers; see the dated corrective UI acceptance below the earlier visual notes. See [final role acceptance](md/12_ROLE_WORKSPACE_UI_PLAN.md) for exact full-run/retry results and limits, and [demo logins and walkthrough](demo/ROLE_DEMO_GUIDE.md). The supplied landing design is integrated at `/landing.html`.

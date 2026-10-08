@@ -176,11 +176,15 @@ def download(request: Request, workspace_id: UUID, artifact_id: UUID, historical
     content, filename, mime, stale = workflow(request, "reports").download(
         authenticated(request), str(workspace_id), str(artifact_id), historical
     )
+    # Sanitize: strip control chars and chars that break quoted-string in headers.
+    safe_filename = "".join(
+        c for c in filename if c not in {'"', "\\", "\r", "\n", "\x00"}
+    )
     return Response(
         content,
         media_type=mime,
         headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Disposition": f'attachment; filename="{safe_filename}"',
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",
             "X-GSTShield-Historical": "true" if stale else "false",

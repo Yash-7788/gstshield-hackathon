@@ -1,6 +1,7 @@
 """Local HTTP foundation with private SQLite accounts and browser sessions."""
 
 import logging
+import sqlite3
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -119,11 +120,23 @@ def create_app(settings: Settings | None = None) -> ASGIApp:
                         if dispatcher is not None:
                             dispatcher.close()
                     finally:
-                        # Never release the process lock while a worker can still touch storage.
-                        workers = (channel_worker, monitor, dispatcher)
-                        if all(
-                            worker is None or not worker.thread.is_alive() for worker in workers
-                        ):
+                        # Wait for workers to stop before releasing the process lock.
+                        # A 12-second deadline per thread prevents indefinite hangs at shutdown.
+                        _THREAD_JOIN_TIMEOUT = 12.0
+                        all_stopped = True
+                        for worker in (channel_worker, monitor, dispatcher):
+                            if worker is not None and worker.thread.is_alive():
+                                worker.thread.join(timeout=_THREAD_JOIN_TIMEOUT)
+                                if worker.thread.is_alive():
+                                    # Thread didn't stop; keep the lock to avoid data corruption.
+                                    logger.error(
+                                        "Worker thread %s did not exit within %.0fs; "
+                                        "storage lock retained to protect database integrity.",
+                                        worker.thread.name,
+                                        _THREAD_JOIN_TIMEOUT,
+                                    )
+                                    all_stopped = False
+                        if all_stopped:
                             store.close()
 
     application = FastAPI(
@@ -171,12 +184,20 @@ def create_app(settings: Settings | None = None) -> ASGIApp:
             "Private storage operation failed; retry after checking local storage.": "TRANSACTION",
         }
         cause = exc.__context__
+        cause_kind = (
+            "SQLITE"
+            if isinstance(cause, sqlite3.Error)
+            else "OS"
+            if isinstance(cause, OSError)
+            else "INTERNAL"
+            if cause is not None
+            else "NONE"
+        )
         logger.warning(
-            "Storage request failure request_id=%s category=%s cause_type=%s code=%s",
+            "Storage request failure request_id=%s category=%s cause_kind=%s",
             request.state.request_id,
             categories.get(str(exc), "INTERNAL"),
-            type(cause).__name__,
-            getattr(cause, "sqlite_errorcode", getattr(cause, "errno", None)),
+            cause_kind,
         )
         return JSONResponse(
             error_payload(

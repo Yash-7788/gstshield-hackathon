@@ -1,0 +1,38 @@
+{
+  "data": {
+    "gstin": "27ABCDE1234F1Z5",
+    "rtnprd": "102026",
+    "docdata": {
+      "b2b": [
+        {
+          "ctin": "27PQRSX5678L1Z2",
+          "trdnm": "Sample Pump Supplier",
+          "inv": [
+            {
+              "inum": "UNRELATED-TEST-OCT08",
+              "dt": "07-10-2026",
+              "val": "118000.00",
+              "txval": "100000.00",
+              "iamt": "0.00",
+              "camt": "9000.00",
+              "samt": "9000.00",
+              "csamt": "0.00",
+              "itcavl": "UNKNOWN"
+            },
+            {
+              "inum": "TEST-OCT08-18000",
+              "dt": "07-10-2026",
+              "val": "118000.00",
+              "txval": "100000.00",
+              "iamt": "0.00",
+              "camt": "9000.00",
+              "samt": "9000.00",
+              "csamt": "0.00",
+              "itcavl": "UNKNOWN"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
